@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>First Light — Global Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="locked">
+
+    <!-- ── 007 FIRST LIGHT GATE ── -->
+    <div id="security-gate" class="security-gate">
+        
+        <!-- Screen Flash Effect -->
+        <div id="muzzle-flash" class="muzzle-flash"></div>
+
+        <!-- Combat Arena -->
+        <div id="game-area" class="game-area"></div>
+
+        <!-- Briefing UI -->
+        <div class="gate-content anim-up" id="gate-ui">
+            <div class="nav-badge" style="margin: 0 auto 1.5rem; border-color: var(--gold); color: var(--gold);">007</div>
+            <h2 class="section-title" style="font-size: 2.2rem; line-height: 1.2;">FIRST LIGHT PROTOCOL</h2>
+            <p class="timeline-subtitle" style="margin-bottom: 2rem; color: var(--red); font-size: 0.8rem;">⚠ WARNING: ROGUE AGENTS DETECTED IN SECTOR 7</p>
+            
+            <div class="score-display">
+                Agents Eliminated: <span id="score" class="gold-text">0</span> / 7
+            </div>
+
+            <button id="start-game-btn" class="btn btn-primary" style="padding: 1rem 2.5rem; font-size: 0.8rem;">Draw Weapon</button>
+        </div>
+    </div>
+
+    <nav class="nav">
+        <div class="container nav-inner">
+            <a href="#" class="nav-logo">
+                <div class="nav-badge">01</div>
+                FIRST LIGHT
+            </a>
+            <ul class="nav-links">
+                <li><a href="#records" class="active">Records</a></li>
+                <li><a href="#systems">Systems</a></li>
+                <li><a href="#chronology">Chronology</a></li>
+            </ul>
+            <button class="nav-mobile-btn">Menu</button>
+        </div>
+    </nav>
+
+    <header class="page-hero">
+        <div class="page-hero-grid"></div>
+        <div class="container anim-up">
+            <div class="page-tag">
+                <div class="page-tag-line"></div>
+                <span class="page-tag-text">System Online</span>
+            </div>
+            <h1 class="page-title">Enter the <strong class="gold-text">Void</strong></h1>
+            <p class="page-subtitle">Global Portfolio Initialized // Access Granted</p>
+            <br><br>
+            <a href="#records" class="btn btn-primary">Initialize Sequence</a>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <section id="records" class="section">
+            <div class="section-label anim-up d1">001: Records</div>
+            <h2 class="section-title anim-up d2">Classified Data</h2>
+            
+            <div class="divider anim-up d3">
+                <div class="divider-line"></div>
+                <div class="divider-diamond"></div>
+                <div class="divider-line"></div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem;">
+                
+                <div class="card anim-up d4">
+                    <span class="classified-badge">Top Secret</span>
+                    <h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">Project Alpha</h3>
+                    <p style="margin-bottom: 1.5rem; font-size: 0.9rem;">Architectural overhaul of mainframe security protocols. Utilized custom encryptions.</p>
+                    <a href="#" class="btn btn-outline">Decrypt Data</a>
+                </div>
+
+                <div class="card anim-up d5">
+                    <span class="classified-badge">Restricted</span>
+                    <h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">Operation Ghost</h3>
+                    <p style="margin-bottom: 1.5rem; font-size: 0.9rem;">Deployment of stealth-mode UI components across global satellite networks.</p>
+                    <a href="#" class="btn btn-outline">View Logs</a>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="systems" class="section">
+            <div class="section-label anim-up d1">002: Systems</div>
+            <h2 class="section-title anim-up d2">Core Competencies</h2>
+            
+            <div class="divider anim-up d3">
+                <div class="divider-line"></div>
+                <div class="divider-diamond"></div>
+                <div class="divider-line"></div>
+            </div>
+
+            <div style="max-width: 600px; margin-top: 2rem;">
+                
+                <div class="skill-bar anim-up d4">
+                    <div class="skill-header">
+                        <span class="skill-name">Frontend Architecture</span>
+                        <span class="skill-level">95%</span>
+                    </div>
+                    <div class="skill-track">
+                        <div class="skill-fill" style="transform: scaleX(0.95);"></div>
+                    </div>
+                </div>
+
+                <div class="skill-bar anim-up d5">
+                    <div class="skill-header">
+                        <span class="skill-name">UI/UX Design</span>
+                        <span class="skill-level">88%</span>
+                    </div>
+                    <div class="skill-track">
+                        <div class="skill-fill" style="transform: scaleX(0.88);"></div>
+                    </div>
+                </div>
+
+                <div class="skill-bar anim-up d6">
+                    <div class="skill-header">
+                        <span class="skill-name">Backend Integration</span>
+                        <span class="skill-level">75%</span>
+                    </div>
+                    <div class="skill-track">
+                        <div class="skill-fill" style="transform: scaleX(0.75);"></div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="chronology" class="section">
+            <div class="section-label anim-up d1">003: Chronology</div>
+            <h2 class="section-title anim-up d2">Service History</h2>
+            
+            <div class="divider anim-up d3">
+                <div class="divider-line"></div>
+                <div class="divider-diamond"></div>
+                <div class="divider-line"></div>
+            </div>
+
+            <div class="timeline anim-up d4" style="margin-top: 2rem; max-width: 800px;">
+                
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">2023 — Present</div>
+                    <h3 class="timeline-title">Lead Architect</h3>
+                    <div class="timeline-subtitle">Nexus Cybernetics Corp.</div>
+                    <p class="timeline-desc">Spearheaded the development of a dark-web surveillance dashboard. Managed a team of 12 engineers to deliver the project 2 months ahead of the global deadline.</p>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">2020 — 2023</div>
+                    <h3 class="timeline-title">Systems Operative</h3>
+                    <div class="timeline-subtitle">Sector 7 Laboratories</div>
+                    <p class="timeline-desc">Maintained legacy codebase and integrated modern API endpoints. Designed the proprietary visual language now used across all internal comms.</p>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-logo">FIRST LIGHT</div>
+            <div class="footer-text">Transmission Ended // © 2026 // Global Portfolio</div>
+        </div>
+    </footer>
+
+<!-- ── 007 COMBAT LOGIC ── -->
+<script>
+    const startBtn = document.getElementById('start-game-btn');
+    const gameArea = document.getElementById('game-area');
+    const scoreDisplay = document.getElementById('score');
+    const gateUI = document.getElementById('gate-ui');
+    const gate = document.getElementById('security-gate');
+    const muzzleFlash = document.getElementById('muzzle-flash');
+
+    let score = 0;
+    const targetScore = 7; // 007
+    let gameInterval;
+
+    // Muzzle Flash Effect on any click in the game area
+    gameArea.addEventListener('mousedown', () => {
+        if (!gameArea.classList.contains('active')) return;
+        muzzleFlash.classList.add('fire');
+        setTimeout(() => muzzleFlash.classList.remove('fire'), 50); // Quick flash
+    });
+
+    // Initialize Combat
+    startBtn.addEventListener('click', () => {
+        startBtn.style.display = 'none'; 
+        gameArea.classList.add('active'); 
+        
+        // Spawn nodes slightly faster to increase tension
+        spawnNode();
+        gameInterval = setInterval(spawnNode, 850); 
+    });
+
+    function spawnNode() {
+        if (score >= targetScore) return;
+
+        const node = document.createElement('div');
+        node.classList.add('target-node');
+
+        // Set initial spawn coordinates
+        let x = Math.floor(Math.random() * 80) + 10; 
+        let y = Math.floor(Math.random() * 80) + 10; 
+        node.style.left = `${x}%`;
+        node.style.top = `${y}%`;
+
+        // Make the agent move/evade every 800ms
+        const moveInterval = setInterval(() => {
+            if (node.classList.contains('destroyed')) {
+                clearInterval(moveInterval);
+                return;
+            }
+            x = Math.floor(Math.random() * 80) + 10;
+            y = Math.floor(Math.random() * 80) + 10;
+            node.style.left = `${x}%`;
+            node.style.top = `${y}%`;
+        }, 800);
+
+        // "Shoot" mechanic
+        node.addEventListener('mousedown', function(e) {
+            e.stopPropagation(); // Prevents double-flashing
+            if (this.classList.contains('destroyed')) return;
+            
+            // Gunfire effect for direct hits
+            muzzleFlash.classList.add('fire');
+            setTimeout(() => muzzleFlash.classList.remove('fire'), 50);
+
+            // Destroy agent
+            this.classList.add('destroyed');
+            score++;
+            scoreDisplay.textContent = score;
+
+            if (score >= targetScore) {
+                winGame();
+            }
+
+            setTimeout(() => this.remove(), 250);
+        });
+
+        gameArea.appendChild(node);
+
+        // Agent escapes after 3 seconds if you miss
+        setTimeout(() => {
+            if (!node.classList.contains('destroyed') && node.parentNode) {
+                clearInterval(moveInterval);
+                node.remove();
+            }
+        }, 3000);
+    }
+
+    function winGame() {
+        clearInterval(gameInterval);
+        gameArea.classList.remove('active');
+        
+        // MI6 Clearance Granted UI
+        gateUI.innerHTML = `
+            <div class="nav-badge" style="margin: 0 auto 1.5rem; border-color: var(--gold-light); color: var(--gold-light);">00</div>
+            <h2 class="section-title" style="font-size: 2.2rem; color: var(--gold-light);">SECTOR CLEARED</h2>
+            <p class="timeline-subtitle">First Light Protocol Initializing...</p>
+        `;
+        
+        // Dramatic pause before revealing the portfolio
+        setTimeout(() => {
+            gate.classList.add('unlocked');
+            document.body.classList.remove('locked');
+        }, 2000);
+    }
+</script>
