@@ -55,7 +55,6 @@ body {
   cursor: crosshair;
 }
 
-/* Scanlines */
 body::before {
   content: '';
   position: fixed;
@@ -68,7 +67,6 @@ body::before {
   z-index: 9999;
 }
 
-/* Subtle grain */
 body::after {
   content: '';
   position: fixed;
@@ -511,15 +509,9 @@ h1, h2, h3, h4 {
   .nav-links       { display: none; }
   .nav-mobile-btn  { display: block; }
 }
-@media (max-width: 640px) {
-  :root { --section-pad: 50px; }
-  .section-title { font-size: 2rem; }
-}
 
 /* ── 007 MECHANICS (SECURITY GATE & IN-GAME ENGINE) ────────── */
-body.locked {
-  overflow: hidden;
-}
+body.locked { overflow: hidden; }
 
 .security-gate {
   position: fixed;
@@ -551,7 +543,6 @@ body.locked {
   z-index: 20;
 }
 
-/* Muzzle Flash Overlay */
 .muzzle-flash {
   position: absolute;
   inset: 0;
@@ -566,7 +557,6 @@ body.locked {
   transition: none;
 }
 
-/* Combat Arena Space */
 .game-area {
   position: absolute;
   inset: 0;
@@ -574,8 +564,6 @@ body.locked {
   overflow: hidden;
   pointer-events: none; 
 }
-
-/* FIX APPLIED HERE: Brings target field cleanly over the briefing menu background when activated */
 .game-area.active {
   pointer-events: auto;
   z-index: 30; 
@@ -597,7 +585,6 @@ body.locked {
   align-items: center;
   justify-content: center;
 }
-
 .target-node::before {
   content: '';
   position: absolute;
@@ -606,7 +593,6 @@ body.locked {
   border-radius: 50%;
   animation: spinSight 3s linear infinite;
 }
-
 .target-node::after {
   content: '00';
   font-family: var(--font-mono);
@@ -614,12 +600,8 @@ body.locked {
   color: var(--cream);
   letter-spacing: 0.1em;
 }
+@keyframes spinSight { 100% { transform: rotate(360deg); } }
 
-@keyframes spinSight {
-  100% { transform: rotate(360deg); }
-}
-
-/* Impact Destruction Frame */
 .target-node.destroyed {
   background: var(--gold);
   border-color: var(--gold-light);
@@ -630,12 +612,7 @@ body.locked {
   transition: all 0.2s ease-out;
 }
 .target-node.destroyed::before { display: none; }
-.target-node.destroyed::after {
-  content: '✕';
-  color: var(--void);
-  font-size: 1.2rem;
-  font-weight: bold;
-}
+.target-node.destroyed::after { content: '✕'; color: var(--void); font-size: 1.2rem; font-weight: bold; }
 
 .score-display {
   font-family: var(--font-mono);
@@ -646,7 +623,6 @@ body.locked {
   text-transform: uppercase;
 }
 
-/* ── IN-GAME HEADS UP DISPLAY (HUD) ───────────────────────── */
 .game-hud {
   position: absolute;
   top: 2rem;
@@ -659,4 +635,19 @@ body.locked {
   letter-spacing: 0.1em;
   pointer-events: none;
   line-height: 1.8;
+}
+
+/* Q-Watch Input Resets */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+input[type=number] {
+  -moz-appearance: textfield;
+  outline: none;
+}
+input[type=number]:focus {
+  border-color: var(--gold-light) !important;
+  box-shadow: var(--glow-sm);
 }
