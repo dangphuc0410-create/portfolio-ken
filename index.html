@@ -145,7 +145,45 @@
                 <div class="divider-diamond"></div>
                 <div class="divider-line"></div>
             </div>
+<section id="simulations" class="section">
+            <div class="section-label anim-up">004: Simulations</div>
+            <h2 class="section-title anim-up">Training Modules</h2>
+            
+            <div class="divider anim-up">
+                <div class="divider-line"></div>
+                <div class="divider-diamond"></div>
+                <div class="divider-line"></div>
+            </div>
 
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem;">
+                
+                <div class="card anim-up">
+                    <span class="classified-badge">Lethal</span>
+                    <h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">001: Marksmanship</h3>
+                    <p style="margin-bottom: 1.5rem; font-size: 0.9rem;">Live-fire exercise. Destroy 10 targets. You have 5 lives. Missing a target compromises the mission.</p>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn btn-outline" onclick="startShooter('easy')">Easy</button>
+                        <button class="btn btn-outline" onclick="startShooter('medium')">Medium</button>
+                        <button class="btn btn-outline" onclick="startShooter('hard')">Hard</button>
+                    </div>
+                </div>
+
+                <div class="card anim-up" style="opacity: 0.6;">
+                    <span class="classified-badge">Psychological</span>
+                    <h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">002: Interrogation</h3>
+                    <p style="margin-bottom: 1.5rem; font-size: 0.9rem;">Polygraph analysis. Identify the rogue agent's lies before the timer expires.</p>
+                    <button class="btn btn-outline" disabled>Locked</button>
+                </div>
+
+                <div class="card anim-up" style="opacity: 0.6;">
+                    <span class="classified-badge">Technical</span>
+                    <h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">003: Q-Branch</h3>
+                    <p style="margin-bottom: 1.5rem; font-size: 0.9rem;">Utilize your Q-Watch frequency jammer to bypass the mainframe firewall.</p>
+                    <button class="btn btn-outline" disabled>Locked</button>
+                </div>
+
+            </div>
+        </section>
             <div class="timeline anim-up d4" style="margin-top: 2rem; max-width: 800px;">
                 
                 <div class="timeline-item">
@@ -176,107 +214,335 @@
         </div>
     </footer>
 
-<!-- ── 007 COMBAT LOGIC ── -->
-<script>
-    const startBtn = document.getElementById('start-game-btn');
-    const gameArea = document.getElementById('game-area');
-    const scoreDisplay = document.getElementById('score');
-    const gateUI = document.getElementById('gate-ui');
-    const gate = document.getElementById('security-gate');
-    const muzzleFlash = document.getElementById('muzzle-flash');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>First Light — Global Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="locked">
 
-    let score = 0;
-    const targetScore = 7; // 007
-    let gameInterval;
+    <div class="gun-barrel-bg"></div>
 
-    // Muzzle Flash Effect on any click in the game area
-    gameArea.addEventListener('mousedown', () => {
-        if (!gameArea.classList.contains('active')) return;
-        muzzleFlash.classList.add('fire');
-        setTimeout(() => muzzleFlash.classList.remove('fire'), 50); // Quick flash
-    });
-
-    // Initialize Combat
-    startBtn.addEventListener('click', () => {
-        startBtn.style.display = 'none'; 
-        gameArea.classList.add('active'); 
+    <div id="security-gate" class="security-gate">
         
-        // Spawn nodes slightly faster to increase tension
-        spawnNode();
-        gameInterval = setInterval(spawnNode, 850); 
-    });
+        <div id="muzzle-flash" class="muzzle-flash"></div>
 
-    function spawnNode() {
-        if (score >= targetScore) return;
+        <div id="game-area" class="game-area"></div>
 
-        const node = document.createElement('div');
-        node.classList.add('target-node');
-
-        // Set initial spawn coordinates
-        let x = Math.floor(Math.random() * 80) + 10; 
-        let y = Math.floor(Math.random() * 80) + 10; 
-        node.style.left = `${x}%`;
-        node.style.top = `${y}%`;
-
-        // Make the agent move/evade every 800ms
-        const moveInterval = setInterval(() => {
-            if (node.classList.contains('destroyed')) {
-                clearInterval(moveInterval);
-                return;
-            }
-            x = Math.floor(Math.random() * 80) + 10;
-            y = Math.floor(Math.random() * 80) + 10;
-            node.style.left = `${x}%`;
-            node.style.top = `${y}%`;
-        }, 800);
-
-        // "Shoot" mechanic
-        node.addEventListener('mousedown', function(e) {
-            e.stopPropagation(); // Prevents double-flashing
-            if (this.classList.contains('destroyed')) return;
+        <div class="gate-content anim-up" id="gate-ui">
+            <div class="nav-badge" style="margin: 0 auto 1.5rem; border-color: var(--gold); color: var(--gold);">007</div>
+            <h2 class="section-title" style="font-size: 2.2rem; line-height: 1.2;">FIRST LIGHT PROTOCOL</h2>
+            <p class="timeline-subtitle" style="margin-bottom: 2rem; color: var(--red); font-size: 0.8rem;">⚠ WARNING: ROGUE AGENTS DETECTED IN SECTOR 7</p>
             
-            // Gunfire effect for direct hits
-            muzzleFlash.classList.add('fire');
-            setTimeout(() => muzzleFlash.classList.remove('fire'), 50);
+            <div class="score-display">
+                Agents Eliminated: <span id="score" class="gold-text">0</span> / 7
+            </div>
 
-            // Destroy agent
-            this.classList.add('destroyed');
-            score++;
-            scoreDisplay.textContent = score;
+            <button class="btn btn-primary" id="start-game-btn">Engage Hostiles</button>
+        </div>
+    </div>
 
-            if (score >= targetScore) {
-                winGame();
-            }
+    <div id="minigame-overlay" class="security-gate" style="display: none; z-index: 10000; flex-direction: column;">
+        <div id="minigame-area" class="game-area active"></div>
+        
+        <div id="minigame-hud" class="game-hud">
+            <div>TARGETS: <span id="hud-score" class="gold-text">0</span> / 10</div>
+            <div>LIVES: <span id="hud-lives" style="color: var(--red);">♥♥♥♥♥</span></div>
+        </div>
 
-            setTimeout(() => this.remove(), 250);
+        <div id="minigame-ui" class="gate-content" style="display: none;">
+            </div>
+
+        <button class="btn btn-outline" id="abort-btn" onclick="abortGame()" style="position: absolute; bottom: 2rem; z-index: 20;">Abort Mission</button>
+    </div>
+
+    <nav class="nav">
+        <div class="container nav-inner">
+            <a href="#" class="nav-logo">
+                <img src="007-logo.png" alt="007 Logo" style="height: 28px; width: auto; filter: drop-shadow(0 0 5px rgba(200,168,75,0.5));">
+                FIRST LIGHT
+            </a>
+            <ul class="nav-links">
+                <li><a href="#intel" class="active">Intel</a></li>
+                <li><a href="#arsenal">Arsenal</a></li>
+                <li><a href="#chronology">Operations</a></li>
+                <li><a href="#simulations">Simulations</a></li>
+            </ul>
+            <button class="nav-mobile-btn">Menu</button>
+        </div>
+    </nav>
+
+    <main>
+        <section id="intel" class="page-hero">
+            <div class="page-hero-grid"></div>
+            <div class="container">
+                <div class="page-tag anim-up d1">
+                    <div class="page-tag-line"></div>
+                    <div class="page-tag-text">MI6 Dossier Restricted</div>
+                </div>
+                <h1 class="page-title anim-up d2">Agent <strong>First Light</strong></h1>
+                <p class="page-subtitle anim-up d3">// Digital Systems Operative // Cyber-Intelligence Specialization</p>
+            </div>
+        </section>
+
+        <section id="chronology" class="section">
+            <div class="container">
+                <div class="section-label anim-up">003: Operational Log</div>
+                <h2 class="section-title anim-up">Mission History</h2>
+                
+                <div class="divider anim-up">
+                    <div class="divider-line"></div>
+                    <div class="divider-diamond"></div>
+                    <div class="divider-line"></div>
+                </div>
+
+                <div class="timeline anim-up d2">
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-date">2024 — Present</div>
+                        <h3 class="timeline-title">Project Archangel (Senior Web Architect)</h3>
+                        <div class="timeline-subtitle">Vanguard Cybersecurity Labs</div>
+                        <p class="timeline-desc">Engineered and built quantum-resistant dashboard user interfaces protecting decentralized data assets. Streamlined asset pipelines using micro-frontend frameworks, improving system deployment security by 40%.</p>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-date">2022 — 2024</div>
+                        <h3 class="timeline-title">Operation Dark Nebula (Full Stack Developer)</h3>
+                        <div class="timeline-subtitle">Aegis Information Defense</div>
+                        <p class="timeline-desc">Constructed tactical secure messaging interfaces using hardened WebSockets and React. Audited customer-facing modules for cryptographic vulnerabilities while building lightweight component libraries.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="simulations" class="section">
+            <div class="container">
+                <div class="section-label anim-up">004: Simulations</div>
+                <h2 class="section-title anim-up">Training Modules</h2>
+                
+                <div class="divider anim-up">
+                    <div class="divider-line"></div>
+                    <div class="divider-diamond"></div>
+                    <div class="divider-line"></div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem;">
+                    
+                    <div class="card anim-up">
+                        <span class="classified-badge">Lethal</span>
+                        <h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">001: Marksmanship</h3>
+                        <p style="margin-bottom: 1.5rem; font-size: 0.9rem;">Live-fire exercise. Destroy 10 targets. You have 5 lives. Missing a target compromises the mission.</p>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-outline" onclick="startShooter('easy')">Easy</button>
+                            <button class="btn btn-outline" onclick="startShooter('medium')">Medium</button>
+                            <button class="btn btn-outline" onclick="startShooter('hard')">Hard</button>
+                        </div>
+                    </div>
+
+                    <div class="card anim-up" style="opacity: 0.6;">
+                        <span class="classified-badge">Psychological</span>
+                        <h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">002: Interrogation</h3>
+                        <p style="margin-bottom: 1.5rem; font-size: 0.9rem;">Polygraph analysis. Identify the rogue agent's lies before the timer expires.</p>
+                        <button class="btn btn-outline" disabled>Locked</button>
+                    </div>
+
+                    <div class="card anim-up" style="opacity: 0.6;">
+                        <span class="classified-badge">Technical</span>
+                        <h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">003: Q-Branch</h3>
+                        <p style="margin-bottom: 1.5rem; font-size: 0.9rem;">Utilize your Q-Watch frequency jammer to bypass the mainframe firewall.</p>
+                        <button class="btn btn-outline" disabled>Locked</button>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-logo">MI6 // FIRST LIGHT</div>
+            <div class="footer-text">Orchestrated with complete clearance. All records classified.</div>
+        </div>
+    </footer>
+
+    <script>
+        // --- GLOBAL ELEMENTS ---
+        const muzzleFlash = document.getElementById('muzzle-flash');
+        
+        // --- ENTRANCE GATE LOGIC (7 HITS TO ENTER SITE) ---
+        const startBtn = document.getElementById('start-game-btn');
+        const gateArea = document.getElementById('game-area');
+        const scoreDisplay = document.getElementById('score');
+        const gateUI = document.getElementById('gate-ui');
+        const gate = document.getElementById('security-gate');
+
+        let entryScore = 0;
+        let entryInterval;
+
+        gateArea.addEventListener('mousedown', () => triggerFlash(gateArea));
+
+        startBtn.addEventListener('click', () => {
+            startBtn.style.display = 'none'; 
+            gateArea.classList.add('active'); 
+            spawnEntryNode();
+            entryInterval = setInterval(spawnEntryNode, 850); 
         });
 
-        gameArea.appendChild(node);
+        function spawnEntryNode() {
+            if (entryScore >= 7) return;
+            createTarget(gateArea, () => {
+                entryScore++;
+                scoreDisplay.textContent = entryScore;
+                if (entryScore >= 7) winEntryGame();
+            }, 3000, true);
+        }
 
-        // Agent escapes after 3 seconds if you miss
-        setTimeout(() => {
-            if (!node.classList.contains('destroyed') && node.parentNode) {
-                clearInterval(moveInterval);
-                node.remove();
-            }
-        }, 3000);
-    }
+        function winEntryGame() {
+            clearInterval(entryInterval);
+            gateArea.classList.remove('active');
+            gateUI.innerHTML = `
+                <div class="nav-badge" style="margin: 0 auto 1.5rem; border-color: var(--gold-light); color: var(--gold-light);">00</div>
+                <h2 class="section-title" style="font-size: 2.2rem; color: var(--gold-light);">SECTOR CLEARED</h2>
+                <p class="timeline-subtitle">First Light Protocol Initializing...</p>
+            `;
+            setTimeout(() => {
+                gate.classList.add('unlocked');
+                document.body.classList.remove('locked');
+            }, 2000);
+        }
 
-    function winGame() {
-        clearInterval(gameInterval);
-        gameArea.classList.remove('active');
-        
-        // MI6 Clearance Granted UI
-        gateUI.innerHTML = `
-            <div class="nav-badge" style="margin: 0 auto 1.5rem; border-color: var(--gold-light); color: var(--gold-light);">00</div>
-            <h2 class="section-title" style="font-size: 2.2rem; color: var(--gold-light);">SECTOR CLEARED</h2>
-            <p class="timeline-subtitle">First Light Protocol Initializing...</p>
-        `;
-        
-        // Dramatic pause before revealing the portfolio
-        setTimeout(() => {
-            gate.classList.add('unlocked');
-            document.body.classList.remove('locked');
-        }, 2000);
-    }
-</script>
+        // --- PORTFOLIO TRAINING SIMULATION ENGINE ---
+        const minigameOverlay = document.getElementById('minigame-overlay');
+        const minigameArea = document.getElementById('minigame-area');
+        const minigameHUD = document.getElementById('minigame-hud');
+        const minigameUI = document.getElementById('minigame-ui');
+        const abortBtn = document.getElementById('abort-btn');
+        const hudScore = document.getElementById('hud-score');
+        const hudLives = document.getElementById('hud-lives');
+
+        let mgScore = 0;
+        let mgLives = 5;
+        const mgMaxTargets = 10;
+        let mgInterval;
+        let currentDifficultySpeed = 2000;
+
+        minigameArea.addEventListener('mousedown', () => triggerFlash(minigameArea));
+
+        function startShooter(difficulty) {
+            document.body.classList.add('locked'); // Restrict scrolling while active
+            minigameOverlay.style.display = 'flex';
+            minigameUI.style.display = 'none';
+            minigameHUD.style.display = 'block';
+            abortBtn.style.display = 'block';
+            minigameArea.innerHTML = '';
+            
+            mgScore = 0;
+            mgLives = 5;
+            updateHUD();
+
+            let spawnRate = 1000;
+            if (difficulty === 'easy') { currentDifficultySpeed = 2500; spawnRate = 1200; }
+            if (difficulty === 'medium') { currentDifficultySpeed = 1500; spawnRate = 900; }
+            if (difficulty === 'hard') { currentDifficultySpeed = 800; spawnRate = 600; }
+
+            spawnMGNode();
+            mgInterval = setInterval(spawnMGNode, spawnRate);
+        }
+
+        function spawnMGNode() {
+            if (mgScore >= mgMaxTargets || mgLives <= 0) return;
+            createTarget(minigameArea, () => {
+                mgScore++;
+                updateHUD();
+                if (mgScore >= mgMaxTargets) winMiniGame();
+            }, currentDifficultySpeed, false);
+        }
+
+        function updateHUD() {
+            hudScore.textContent = mgScore;
+            hudLives.textContent = '♥'.repeat(mgLives > 0 ? mgLives : 0);
+            if (mgLives <= 0) loseMiniGame();
+        }
+
+        function loseMiniGame() {
+            endMiniGame(`
+                <h2 class="section-title" style="color: var(--red);">MISSION FAILED</h2>
+                <p class="timeline-subtitle" style="margin-bottom: 2rem;">Agent compromised. Targets escaped.</p>
+            `);
+        }
+
+        function winMiniGame() {
+            endMiniGame(`
+                <h2 class="section-title" style="color: var(--gold-light);">ASSIGNMENT CLEARED</h2>
+                <p class="timeline-subtitle" style="margin-bottom: 2rem;">Excellent marksmanship, 00.</p>
+            `);
+        }
+
+        function endMiniGame(messageHTML) {
+            clearInterval(mgInterval);
+            minigameArea.innerHTML = '';
+            minigameHUD.style.display = 'none';
+            abortBtn.style.display = 'none';
+            minigameUI.style.display = 'block';
+            minigameUI.innerHTML = messageHTML + `<button class="btn btn-outline" onclick="abortGame()">Return to Portfolio</button>`;
+        }
+
+        function abortGame() {
+            clearInterval(mgInterval);
+            minigameArea.innerHTML = '';
+            minigameOverlay.style.display = 'none';
+            document.body.classList.remove('locked'); // Free scroll
+        }
+
+        // --- REUSABLE UTILITY SCHEDULERS ---
+        function triggerFlash(container) {
+            if (!container.classList.contains('active')) return;
+            muzzleFlash.classList.add('fire');
+            setTimeout(() => muzzleFlash.classList.remove('fire'), 50);
+        }
+
+        function createTarget(container, onHitCallback, lifespan, isEntryGame) {
+            const node = document.createElement('div');
+            node.classList.add('target-node');
+            node.style.left = Math.floor(Math.random() * 80) + 10 + '%';
+            node.style.top = Math.floor(Math.random() * 80) + 10 + '%';
+
+            // Give targets floating motion
+            const moveInterval = setInterval(() => {
+                if (node.classList.contains('destroyed')) {
+                    clearInterval(moveInterval);
+                    return;
+                }
+                node.style.left = Math.floor(Math.random() * 80) + 10 + '%';
+                node.style.top = Math.floor(Math.random() * 80) + 10 + '%';
+            }, lifespan / 2);
+
+            node.addEventListener('mousedown', function(e) {
+                e.stopPropagation();
+                if (this.classList.contains('destroyed')) return;
+                this.classList.add('destroyed');
+                onHitCallback();
+                setTimeout(() => this.remove(), 250);
+            });
+
+            container.appendChild(node);
+
+            // Timeout monitoring
+            setTimeout(() => {
+                if (!node.classList.contains('destroyed') && node.parentNode) {
+                    clearInterval(moveInterval);
+                    node.remove();
+                    if (!isEntryGame) {
+                        mgLives--; // Remove a heart if a simulation target escapes
+                        updateHUD();
+                    }
+                }
+            }, lifespan);
+        }
+    </script>
+</body>
+</html>
