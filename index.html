@@ -184,7 +184,8 @@
         let entryScore = 0;
         let entryInterval;
 
-        gateArea.addEventListener('mousedown', () => triggerFlash(gateArea));
+        // PATCHED: pointerdown for mobile touch support
+        gateArea.addEventListener('pointerdown', () => triggerFlash(gateArea));
 
         startBtn.addEventListener('click', () => {
             startBtn.style.display = 'none'; 
@@ -204,7 +205,10 @@
 
         function winEntryGame() {
             clearInterval(entryInterval);
+            // PATCHED: Clear any floating ghost targets
+            gateArea.innerHTML = '';
             gateArea.classList.remove('active');
+            
             gateUI.innerHTML = `
                 <div class="nav-badge" style="margin: 0 auto 1.5rem; border-color: var(--gold-light); color: var(--gold-light);">00</div>
                 <h2 class="section-title" style="font-size: 2.2rem; color: var(--gold-light);">SECTOR CLEARED</h2>
@@ -231,7 +235,8 @@
         let mgInterval;
         let currentDifficultySpeed = 2000;
 
-        minigameArea.addEventListener('mousedown', () => triggerFlash(minigameArea));
+        // PATCHED: pointerdown for mobile touch support
+        minigameArea.addEventListener('pointerdown', () => triggerFlash(minigameArea));
 
         function startShooter(difficulty) {
             document.body.classList.add('locked'); // Stop background scrolls while actively testing
@@ -327,7 +332,8 @@
                 node.style.top = Math.floor(Math.random() * 80) + 10 + '%';
             }, lifespan / 2);
 
-            node.addEventListener('mousedown', function(e) {
+            // PATCHED: pointerdown for mobile touch support
+            node.addEventListener('pointerdown', function(e) {
                 e.stopPropagation();
                 if (this.classList.contains('destroyed')) return;
                 this.classList.add('destroyed');
