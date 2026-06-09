@@ -8,23 +8,16 @@
 </head>
 <body class="locked">
 
-    <!-- ── GUN BARREL BACKGROUND LAYER ── -->
     <div class="gun-barrel-bg"></div>
 
-    <!-- ── 007 ENTRANCE GATE ── -->
     <div id="security-gate" class="security-gate">
-        
-        <!-- Screen Flash Impact Effect -->
         <div id="muzzle-flash" class="muzzle-flash"></div>
-
-        <!-- Combat Arena Area -->
         <div id="game-area" class="game-area"></div>
 
-        <!-- Briefing Interface Overlay -->
         <div class="gate-content anim-up" id="gate-ui">
             <div class="nav-badge" style="margin: 0 auto 1.5rem; border-color: var(--gold); color: var(--gold);">007</div>
             <h2 class="section-title" style="font-size: 2.2rem; line-height: 1.2;">FIRST LIGHT PROTOCOL</h2>
-            <p class="timeline-subtitle" style="margin-bottom: 2rem; color: var(--red); font-size: 0.8rem;">⚠ WARNING: ROGUE AGENTS DETECTED IN SECTOR 7</p>
+            <p class="timeline-subtitle" style="margin-bottom: 2rem; color: var(--red); font-size: 0.8rem;">⚠ WARNING: ROGUE AGENTS DETECTED</p>
             
             <div class="score-display">
                 Agents Eliminated: <span id="score" class="gold-text">0</span> / 7
@@ -32,25 +25,18 @@
 
             <button class="btn btn-primary" id="start-game-btn">Engage Hostiles</button>
         </div>
+        
+        <button onclick="winEntryGame()" style="position: absolute; bottom: 10px; right: 10px; background: transparent; border: none; color: var(--text-muted); opacity: 0.3; font-size: 10px; cursor: pointer; padding: 5px; z-index: 9999;">[ DEV OVERRIDE ]</button>
     </div>
 
-    <!-- ── TRAINING MINIGAME OVERLAY ── -->
     <div id="minigame-overlay" class="security-gate" style="display: none; z-index: 10000; flex-direction: column;">
         <div id="minigame-area" class="game-area active"></div>
-        
-        <!-- Dynamic HUD Tracker -->
-        <div id="minigame-hud" class="game-hud">
-            <div>TARGETS: <span id="hud-score" class="gold-text">0</span> / 10</div>
-            <div>LIVES: <span id="hud-lives" style="color: var(--red);">♥♥♥♥•</span></div>
-        </div>
-
-        <!-- Injected Content Box for Win/Loss End Screens -->
+        <div id="minigame-hud" class="game-hud"></div>
         <div id="minigame-ui" class="gate-content" style="display: none;"></div>
-
-        <button class="btn btn-outline" id="abort-btn" onclick="abortGame()" style="position: absolute; bottom: 2rem; z-index: 20;">Abort Mission</button>
+        
+        <button class="btn btn-outline" id="abort-btn" onclick="abortGame()" style="position: absolute; bottom: 2rem; z-index: 50; display: none;">Abort Mission</button>
     </div>
 
-    <!-- ── NAVIGATION BAR ── -->
     <nav class="nav">
         <div class="container nav-inner">
             <a href="#" class="nav-logo">
@@ -59,17 +45,13 @@
             </a>
             <ul class="nav-links">
                 <li><a href="#intel" class="active">Intel</a></li>
-                <li><a href="#arsenal">Arsenal</a></li>
                 <li><a href="#chronology">Operations</a></li>
                 <li><a href="#simulations">Simulations</a></li>
             </ul>
-            <button class="nav-mobile-btn">Menu</button>
         </div>
     </nav>
 
-    <!-- ── MAIN APPLICATION CONTENT ── -->
     <main>
-        <!-- HERO SEGMENT -->
         <section id="intel" class="page-hero">
             <div class="page-hero-grid"></div>
             <div class="container">
@@ -82,17 +64,11 @@
             </div>
         </section>
 
-        <!-- MISSION LOG CHRONOLOGY -->
         <section id="chronology" class="section">
             <div class="container">
                 <div class="section-label anim-up">003: Operational Log</div>
                 <h2 class="section-title anim-up">Mission History</h2>
-                
-                <div class="divider anim-up">
-                    <div class="divider-line"></div>
-                    <div class="divider-diamond"></div>
-                    <div class="divider-line"></div>
-                </div>
+                <div class="divider anim-up"><div class="divider-line"></div><div class="divider-diamond"></div><div class="divider-line"></div></div>
 
                 <div class="timeline anim-up d2">
                     <div class="timeline-item">
@@ -100,60 +76,43 @@
                         <div class="timeline-date">2024 — Present</div>
                         <h3 class="timeline-title">Project Archangel (Senior Web Architect)</h3>
                         <div class="timeline-subtitle">Vanguard Cybersecurity Labs</div>
-                        <p class="timeline-desc">Engineered and built quantum-resistant dashboard user interfaces protecting decentralized data assets. Streamlined asset pipelines using micro-frontend frameworks, improving system deployment security by 40%.</p>
-                    </div>
-
-                    <div class="timeline-item">
-                        <div class="timeline-dot"></div>
-                        <div class="timeline-date">2022 — 2024</div>
-                        <h3 class="timeline-title">Operation Dark Nebula (Full Stack Developer)</h3>
-                        <div class="timeline-subtitle">Aegis Information Defense</div>
-                        <p class="timeline-desc">Constructed tactical secure messaging interfaces using hardened WebSockets and React. Audited customer-facing modules for cryptographic vulnerabilities while building lightweight component libraries.</p>
+                        <p class="timeline-desc">Engineered and built quantum-resistant dashboard user interfaces protecting decentralized data assets.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- ── SECTION 004: SIMULATIONS (MINI-GAMES HUB) ── -->
         <section id="simulations" class="section">
             <div class="container">
                 <div class="section-label anim-up">004: Simulations</div>
                 <h2 class="section-title anim-up">Training Modules</h2>
-                
-                <div class="divider anim-up">
-                    <div class="divider-line"></div>
-                    <div class="divider-diamond"></div>
-                    <div class="divider-line"></div>
-                </div>
+                <div class="divider anim-up"><div class="divider-line"></div><div class="divider-diamond"></div><div class="divider-line"></div></div>
 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem;">
                     
-                    <!-- MODULE GAME 001 -->
                     <div class="card anim-up">
                         <span class="classified-badge">Lethal</span>
                         <h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">001: Marksmanship</h3>
-                        <p style="margin-bottom: 1.5rem; font-size: 0.9rem;">Live-fire exercise. Destroy 10 targets. You have 5 lives. Missing a target compromises the mission.</p>
-                        <div style="display: flex; gap: 0.5rem;">
-                            <button class="btn btn-outline" onclick="startShooter('easy')">Easy</button>
-                            <button class="btn btn-outline" onclick="startShooter('medium')">Medium</button>
-                            <button class="btn btn-outline" onclick="startShooter('hard')">Hard</button>
+                        <p style="margin-bottom: 1.5rem; font-size: 0.9rem;">Live-fire exercise. Destroy 10 targets. 5 lives. Missing a target compromises the mission.</p>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <button class="btn btn-outline" style="padding: 0.5rem 1rem;" onclick="startShooter('easy')">Easy</button>
+                            <button class="btn btn-outline" style="padding: 0.5rem 1rem;" onclick="startShooter('medium')">Medium</button>
+                            <button class="btn btn-outline" style="padding: 0.5rem 1rem;" onclick="startShooter('hard')">Hard</button>
                         </div>
                     </div>
 
-                    <!-- MODULE GAME 002 -->
-                    <div class="card anim-up" style="opacity: 0.6;">
+                    <div class="card anim-up">
                         <span class="classified-badge">Psychological</span>
                         <h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">002: Interrogation</h3>
-                        <p style="margin-bottom: 1.5rem; font-size: 0.9rem;">Polygraph analysis. Identify the rogue agent's lies before the timer expires.</p>
-                        <button class="btn btn-outline" disabled style="cursor: not-allowed;">Locked</button>
+                        <p style="margin-bottom: 1.5rem; font-size: 0.9rem;">Polygraph analysis. Identify if the rogue asset is telling the TRUTH or a LIE before time expires.</p>
+                        <button class="btn btn-outline" onclick="startInterrogation()">Initiate Scan</button>
                     </div>
 
-                    <!-- MODULE GAME 003 -->
-                    <div class="card anim-up" style="opacity: 0.6;">
+                    <div class="card anim-up">
                         <span class="classified-badge">Technical</span>
                         <h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">003: Q-Branch</h3>
-                        <p style="margin-bottom: 1.5rem; font-size: 0.9rem;">Utilize your Q-Watch frequency jammer to bypass the mainframe firewall.</p>
-                        <button class="btn btn-outline" disabled style="cursor: not-allowed;">Locked</button>
+                        <p style="margin-bottom: 1.5rem; font-size: 0.9rem;">Logic Codebreaker. Use your Q-Watch frequency jammer to crack the 3-digit mainframe code.</p>
+                        <button class="btn btn-outline" onclick="startQWatch()">Access Device</button>
                     </div>
 
                 </div>
@@ -161,7 +120,6 @@
         </section>
     </main>
 
-    <!-- SYSTEM FOOTER -->
     <footer class="footer">
         <div class="container">
             <div class="footer-logo">MI6 // FIRST LIGHT</div>
@@ -169,22 +127,27 @@
         </div>
     </footer>
 
-    <!-- ── RE-ENGINEERED ENGINE LOGIC ── -->
     <script>
-        // --- CORE APPLICATION ARCHITECTURE ---
         const muzzleFlash = document.getElementById('muzzle-flash');
+        const minigameOverlay = document.getElementById('minigame-overlay');
+        const minigameArea = document.getElementById('minigame-area');
+        const minigameHUD = document.getElementById('minigame-hud');
+        const minigameUI = document.getElementById('minigame-ui');
+        const abortBtn = document.getElementById('abort-btn');
         
-        // --- GATE ARCHITECTURE (7 REQUISITE ELIMINATIONS TO DISENGAGE CAPTCHA) ---
+        // Timer references for aborting properly
+        let entryInterval;
+        let mgInterval;
+        let intTimer;
+
+        // --- ENTRANCE GATE LOGIC ---
         const startBtn = document.getElementById('start-game-btn');
         const gateArea = document.getElementById('game-area');
         const scoreDisplay = document.getElementById('score');
         const gateUI = document.getElementById('gate-ui');
         const gate = document.getElementById('security-gate');
-
         let entryScore = 0;
-        let entryInterval;
 
-        // PATCHED: pointerdown for mobile touch support
         gateArea.addEventListener('pointerdown', () => triggerFlash(gateArea));
 
         startBtn.addEventListener('click', () => {
@@ -205,8 +168,7 @@
 
         function winEntryGame() {
             clearInterval(entryInterval);
-            // PATCHED: Clear any floating ghost targets
-            gateArea.innerHTML = '';
+            gateArea.innerHTML = ''; // Wipe targets
             gateArea.classList.remove('active');
             
             gateUI.innerHTML = `
@@ -217,43 +179,59 @@
             setTimeout(() => {
                 gate.classList.add('unlocked');
                 document.body.classList.remove('locked');
-            }, 2000);
+            }, 1000); // slightly faster unlock for dev convenience
         }
 
-        // --- PORTFOLIO SYSTEM SIMULATION SUB-ROUTINES (GAME 1) ---
-        const minigameOverlay = document.getElementById('minigame-overlay');
-        const minigameArea = document.getElementById('minigame-area');
-        const minigameHUD = document.getElementById('minigame-hud');
-        const minigameUI = document.getElementById('minigame-ui');
-        const abortBtn = document.getElementById('abort-btn');
-        const hudScore = document.getElementById('hud-score');
-        const hudLives = document.getElementById('hud-lives');
+        // --- GLOBAL ABORT / RETURN TO PORTFOLIO ---
+        function abortGame() {
+            clearInterval(mgInterval);
+            clearInterval(intTimer);
+            
+            minigameArea.innerHTML = '';
+            minigameHUD.innerHTML = '';
+            minigameUI.style.display = 'none';
+            abortBtn.style.display = 'none';
+            minigameOverlay.style.display = 'none';
+            document.body.classList.remove('locked');
+        }
 
+        function endMiniGame(messageHTML) {
+            clearInterval(mgInterval);
+            clearInterval(intTimer);
+            minigameArea.innerHTML = '';
+            minigameHUD.innerHTML = '';
+            abortBtn.style.display = 'none';
+            minigameUI.style.display = 'block';
+            minigameUI.innerHTML = messageHTML + `<br><button class="btn btn-outline" onclick="abortGame()">Return to Portfolio</button>`;
+        }
+
+        // --- GAME 1: MARKSMANSHIP ---
         let mgScore = 0;
         let mgLives = 5;
         const mgMaxTargets = 10;
-        let mgInterval;
-        let currentDifficultySpeed = 2000;
+        let currentSpeed = 2000;
 
-        // PATCHED: pointerdown for mobile touch support
         minigameArea.addEventListener('pointerdown', () => triggerFlash(minigameArea));
 
         function startShooter(difficulty) {
-            document.body.classList.add('locked'); // Stop background scrolls while actively testing
+            document.body.classList.add('locked');
             minigameOverlay.style.display = 'flex';
             minigameUI.style.display = 'none';
-            minigameHUD.style.display = 'block';
             abortBtn.style.display = 'block';
             minigameArea.innerHTML = '';
             
+            minigameHUD.innerHTML = `
+                <div>TARGETS: <span id="hud-score" class="gold-text">0</span> / 10</div>
+                <div>LIVES: <span id="hud-lives" style="color: var(--red);">♥♥♥♥♥</span></div>
+            `;
             mgScore = 0;
             mgLives = 5;
             updateHUD();
 
             let spawnRate = 1000;
-            if (difficulty === 'easy') { currentDifficultySpeed = 2500; spawnRate = 1200; }
-            if (difficulty === 'medium') { currentDifficultySpeed = 1500; spawnRate = 900; }
-            if (difficulty === 'hard') { currentDifficultySpeed = 800; spawnRate = 600; }
+            if (difficulty === 'easy') { currentSpeed = 2500; spawnRate = 1200; }
+            if (difficulty === 'medium') { currentSpeed = 1500; spawnRate = 900; }
+            if (difficulty === 'hard') { currentSpeed = 800; spawnRate = 600; }
 
             spawnMGNode();
             mgInterval = setInterval(spawnMGNode, spawnRate);
@@ -264,75 +242,34 @@
             createTarget(minigameArea, () => {
                 mgScore++;
                 updateHUD();
-                if (mgScore >= mgMaxTargets) winMiniGame();
-            }, currentDifficultySpeed, false);
+                if (mgScore >= mgMaxTargets) {
+                    endMiniGame(`<h2 class="section-title" style="color: var(--gold-light);">ASSIGNMENT CLEARED</h2><p class="timeline-subtitle" style="margin-bottom: 2rem;">Excellent marksmanship, 00.</p>`);
+                }
+            }, currentSpeed, false);
         }
 
         function updateHUD() {
-            hudScore.textContent = mgScore;
-            
-            // Build live hearts structure
+            document.getElementById('hud-score').textContent = mgScore;
             let heartString = '♥'.repeat(mgLives > 0 ? mgLives : 0);
             let missingString = '•'.repeat(5 - (mgLives > 0 ? mgLives : 0));
-            hudLives.textContent = heartString + missingString;
-
-            if (mgLives <= 0) loseMiniGame();
+            document.getElementById('hud-lives').textContent = heartString + missingString;
+            if (mgLives <= 0) {
+                endMiniGame(`<h2 class="section-title" style="color: var(--red);">MISSION FAILED</h2><p class="timeline-subtitle" style="margin-bottom: 2rem;">Agent compromised. Targets escaped.</p>`);
+            }
         }
 
-        function loseMiniGame() {
-            endMiniGame(`
-                <h2 class="section-title" style="color: var(--red);">MISSION FAILED</h2>
-                <p class="timeline-subtitle" style="margin-bottom: 2rem;">Agent compromised. Targets escaped.</p>
-            `);
-        }
-
-        function winMiniGame() {
-            endMiniGame(`
-                <h2 class="section-title" style="color: var(--gold-light);">ASSIGNMENT CLEARED</h2>
-                <p class="timeline-subtitle" style="margin-bottom: 2rem;">Excellent marksmanship, 00.</p>
-            `);
-        }
-
-        function endMiniGame(messageHTML) {
-            clearInterval(mgInterval);
-            minigameArea.innerHTML = '';
-            minigameHUD.style.display = 'none';
-            abortBtn.style.display = 'none';
-            minigameUI.style.display = 'block';
-            minigameUI.innerHTML = messageHTML + `<button class="btn btn-outline" onclick="abortGame()">Return to Portfolio</button>`;
-        }
-
-        function abortGame() {
-            clearInterval(mgInterval);
-            minigameArea.innerHTML = '';
-            minigameOverlay.style.display = 'none';
-            document.body.classList.remove('locked'); // Free viewing constraints
-        }
-
-        // --- GLOBAL REUSABLE PIPELINES ---
-        function triggerFlash(container) {
-            if (!container.classList.contains('active')) return;
-            muzzleFlash.classList.add('fire');
-            setTimeout(() => muzzleFlash.classList.remove('fire'), 50);
-        }
-
-        function createTarget(container, onHitCallback, lifespan, isEntryGame) {
+        function createTarget(container, onHitCallback, lifespan, isEntry) {
             const node = document.createElement('div');
             node.classList.add('target-node');
             node.style.left = Math.floor(Math.random() * 80) + 10 + '%';
             node.style.top = Math.floor(Math.random() * 80) + 10 + '%';
 
-            // Random path drifting loop
             const moveInterval = setInterval(() => {
-                if (node.classList.contains('destroyed')) {
-                    clearInterval(moveInterval);
-                    return;
-                }
+                if (node.classList.contains('destroyed')) { clearInterval(moveInterval); return; }
                 node.style.left = Math.floor(Math.random() * 80) + 10 + '%';
                 node.style.top = Math.floor(Math.random() * 80) + 10 + '%';
             }, lifespan / 2);
 
-            // PATCHED: pointerdown for mobile touch support
             node.addEventListener('pointerdown', function(e) {
                 e.stopPropagation();
                 if (this.classList.contains('destroyed')) return;
@@ -342,18 +279,161 @@
             });
 
             container.appendChild(node);
-
-            // Cleanup monitoring pipeline
             setTimeout(() => {
                 if (!node.classList.contains('destroyed') && node.parentNode) {
                     clearInterval(moveInterval);
                     node.remove();
-                    if (!isEntryGame) {
-                        mgLives--; // Deduct penalty unit if item escapes validation parameters
-                        updateHUD();
-                    }
+                    if (!isEntry) { mgLives--; updateHUD(); }
                 }
             }, lifespan);
+        }
+
+        function triggerFlash(container) {
+            if (!container.classList.contains('active')) return;
+            muzzleFlash.classList.add('fire');
+            setTimeout(() => muzzleFlash.classList.remove('fire'), 50);
+        }
+
+        // --- GAME 2: INTERROGATION (Truth/Lie) ---
+        const intBank = [
+            { q: "Your handler's codename is Archangel.", lie: false },
+            { q: "You transmitted the encrypted files at midnight.", lie: true },
+            { q: "The target was eliminated using a suppressed weapon.", lie: false },
+            { q: "You acquired the Q-Watch from the Berlin safehouse.", lie: true },
+            { q: "The syndicate operates out of Geneva.", lie: false },
+            { q: "You were compromised during the Vienna extraction.", lie: true }
+        ];
+        let intIndex = 0;
+        let intScore = 0;
+        let intTimeLeft = 10;
+        let shuffledInt = [];
+
+        function startInterrogation() {
+            document.body.classList.add('locked');
+            minigameOverlay.style.display = 'flex';
+            minigameUI.style.display = 'none';
+            minigameArea.innerHTML = '';
+            minigameHUD.innerHTML = '';
+            abortBtn.style.display = 'block';
+            
+            // Shuffle questions and pick 5
+            shuffledInt = intBank.sort(() => 0.5 - Math.random()).slice(0, 5);
+            intIndex = 0;
+            intScore = 0;
+            renderInterrogation();
+        }
+
+        function renderInterrogation() {
+            if (intIndex >= 5) {
+                if (intScore >= 4) {
+                    return endMiniGame(`<h2 class="section-title" style="color: var(--gold-light);">INTERROGATION PASSED</h2><p class="timeline-subtitle" style="margin-bottom: 2rem;">You detected ${intScore}/5 correctly. Human lie detector.</p>`);
+                } else {
+                    return endMiniGame(`<h2 class="section-title" style="color: var(--red);">INTERROGATION FAILED</h2><p class="timeline-subtitle" style="margin-bottom: 2rem;">You only caught ${intScore}/5. The asset deceived you.</p>`);
+                }
+            }
+            intTimeLeft = 10;
+            const currentQ = shuffledInt[intIndex];
+            
+            minigameArea.innerHTML = `
+                <div class="gate-content anim-up" style="position:relative; z-index:40; margin: auto;">
+                    <div class="nav-badge" style="margin: 0 auto 1.5rem; border-color: var(--gold); color: var(--gold);">Q${intIndex+1}</div>
+                    <p class="timeline-subtitle" style="margin-bottom: 1rem;">POLYGRAPH ACTIVE // ASSET STATEMENT:</p>
+                    <h3 style="margin-bottom: 2rem; font-size: 1.5rem; color:var(--cream); line-height: 1.4;">"${currentQ.q}"</h3>
+                    <div style="font-family: var(--font-mono); color: var(--red); margin-bottom: 1.5rem;">TIME: <span id="int-timer">10</span>s</div>
+                    <div style="display:flex; gap:1rem; justify-content:center;">
+                        <button class="btn btn-outline" style="border-color: var(--silver);" onclick="answerInterrogation(false)">TRUTH</button>
+                        <button class="btn btn-outline" style="border-color: var(--red); color: var(--red);" onclick="answerInterrogation(true)">LIE</button>
+                    </div>
+                </div>
+            `;
+            
+            clearInterval(intTimer);
+            intTimer = setInterval(() => {
+                intTimeLeft--;
+                document.getElementById('int-timer').textContent = intTimeLeft;
+                if (intTimeLeft <= 0) answerInterrogation(null); // Timeout counts as wrong
+            }, 1000);
+        }
+
+        function answerInterrogation(userGuessedLie) {
+            clearInterval(intTimer);
+            const currentQ = shuffledInt[intIndex];
+            if (userGuessedLie === currentQ.lie) intScore++;
+            intIndex++;
+            renderInterrogation();
+        }
+
+        // --- GAME 3: Q-WATCH CODEBREAKER ---
+        let qwCode = [];
+        let qwAttempts = 0;
+        const qwMaxAttempts = 7;
+        
+        function startQWatch() {
+            document.body.classList.add('locked');
+            minigameOverlay.style.display = 'flex';
+            minigameUI.style.display = 'none';
+            minigameArea.innerHTML = '';
+            minigameHUD.innerHTML = '';
+            abortBtn.style.display = 'block';
+            
+            // Generate 3 random digits
+            qwCode = [Math.floor(Math.random()*10), Math.floor(Math.random()*10), Math.floor(Math.random()*10)];
+            qwAttempts = 0;
+            renderQWatch();
+        }
+        
+        function renderQWatch(message = "Enter 3-digit access code.") {
+            minigameArea.innerHTML = `
+                <div class="gate-content anim-up" style="position:relative; z-index:40; margin: auto;">
+                    <div class="nav-badge" style="margin: 0 auto 1.5rem; border-color: var(--silver); color: var(--silver);">Q-W</div>
+                    <h2 class="section-title" style="font-size: 2rem;">MAINFRAME BYPASS</h2>
+                    <p class="timeline-subtitle" style="margin-bottom: 2rem;">${message}</p>
+                    <div style="font-family: var(--font-mono); color: var(--gold); margin-bottom: 1.5rem;">ATTEMPTS REMAINING: ${qwMaxAttempts - qwAttempts}</div>
+                    
+                    <div style="display:flex; gap:0.5rem; justify-content:center; margin-bottom: 2rem;">
+                        <input type="number" id="qw-1" min="0" max="9" style="width:50px; height:60px; font-size:2rem; text-align:center; background:var(--dark); color:var(--gold); border:1px solid var(--gold); font-family:var(--font-mono);" oninput="this.value=this.value.slice(0,1)">
+                        <input type="number" id="qw-2" min="0" max="9" style="width:50px; height:60px; font-size:2rem; text-align:center; background:var(--dark); color:var(--gold); border:1px solid var(--gold); font-family:var(--font-mono);" oninput="this.value=this.value.slice(0,1)">
+                        <input type="number" id="qw-3" min="0" max="9" style="width:50px; height:60px; font-size:2rem; text-align:center; background:var(--dark); color:var(--gold); border:1px solid var(--gold); font-family:var(--font-mono);" oninput="this.value=this.value.slice(0,1)">
+                    </div>
+                    <button class="btn btn-primary" onclick="checkQWatch()">DECRYPT</button>
+                </div>
+            `;
+        }
+        
+        function checkQWatch() {
+            let g1 = parseInt(document.getElementById('qw-1').value);
+            let g2 = parseInt(document.getElementById('qw-2').value);
+            let g3 = parseInt(document.getElementById('qw-3').value);
+            
+            if (isNaN(g1) || isNaN(g2) || isNaN(g3)) {
+                renderQWatch("Error: Incomplete sequence.");
+                return;
+            }
+            
+            qwAttempts++;
+            let guess = [g1, g2, g3];
+            let exact = 0, partial = 0;
+            let codeCopy = [...qwCode], guessCopy = [...guess];
+            
+            // Check exacts
+            for(let i=0; i<3; i++) {
+                if(guessCopy[i] === codeCopy[i]) { exact++; codeCopy[i] = null; guessCopy[i] = -1; }
+            }
+            // Check partials
+            for(let i=0; i<3; i++) {
+                if(guessCopy[i] !== -1) {
+                    let idx = codeCopy.indexOf(guessCopy[i]);
+                    if(idx > -1) { partial++; codeCopy[idx] = null; }
+                }
+            }
+            
+            if (exact === 3) {
+                endMiniGame(`<h2 class="section-title" style="color: var(--gold-light);">FIREWALL BREACHED</h2><p class="timeline-subtitle" style="margin-bottom: 2rem;">Mainframe access granted. Splendid work, agent.</p>`);
+            } else if (qwAttempts >= qwMaxAttempts) {
+                endMiniGame(`<h2 class="section-title" style="color: var(--red);">SYSTEM LOCKED</h2><p class="timeline-subtitle" style="margin-bottom: 2rem;">Too many failed attempts. Security countermeasures deployed.</p>`);
+            } else {
+                renderQWatch(`Analysis: ${exact} precise matches. ${partial} partial matches.`);
+            }
         }
     </script>
 </body>
