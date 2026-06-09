@@ -8,230 +8,19 @@
 </head>
 <body class="locked">
 
-    <!-- ── 007 FIRST LIGHT GATE ── -->
-    <div id="security-gate" class="security-gate">
-        
-        <!-- Screen Flash Effect -->
-        <div id="muzzle-flash" class="muzzle-flash"></div>
-
-        <!-- Combat Arena -->
-        <div id="game-area" class="game-area"></div>
-
-        <!-- Briefing UI -->
-        <div class="gate-content anim-up" id="gate-ui">
-            <div class="nav-badge" style="margin: 0 auto 1.5rem; border-color: var(--gold); color: var(--gold);">007</div>
-            <h2 class="section-title" style="font-size: 2.2rem; line-height: 1.2;">FIRST LIGHT PROTOCOL</h2>
-            <p class="timeline-subtitle" style="margin-bottom: 2rem; color: var(--red); font-size: 0.8rem;">⚠ WARNING: ROGUE AGENTS DETECTED IN SECTOR 7</p>
-            
-            <div class="score-display">
-                Agents Eliminated: <span id="score" class="gold-text">0</span> / 7
-            </div>
-
-            <button id="start-game-btn" class="btn btn-primary" style="padding: 1rem 2.5rem; font-size: 0.8rem;">Draw Weapon</button>
-        </div>
-    </div>
-
-    <nav class="nav">
-        <div class="container nav-inner">
-            <a href="#" class="nav-logo">
-                <div class="nav-badge">01</div>
-                FIRST LIGHT
-            </a>
-            <ul class="nav-links">
-                <li><a href="#records" class="active">Records</a></li>
-                <li><a href="#systems">Systems</a></li>
-                <li><a href="#chronology">Chronology</a></li>
-            </ul>
-            <button class="nav-mobile-btn">Menu</button>
-        </div>
-    </nav>
-
-    <header class="page-hero">
-        <div class="page-hero-grid"></div>
-        <div class="container anim-up">
-            <div class="page-tag">
-                <div class="page-tag-line"></div>
-                <span class="page-tag-text">System Online</span>
-            </div>
-            <h1 class="page-title">Enter the <strong class="gold-text">Void</strong></h1>
-            <p class="page-subtitle">Global Portfolio Initialized // Access Granted</p>
-            <br><br>
-            <a href="#records" class="btn btn-primary">Initialize Sequence</a>
-        </div>
-    </header>
-
-    <main class="container">
-
-        <section id="records" class="section">
-            <div class="section-label anim-up d1">001: Records</div>
-            <h2 class="section-title anim-up d2">Classified Data</h2>
-            
-            <div class="divider anim-up d3">
-                <div class="divider-line"></div>
-                <div class="divider-diamond"></div>
-                <div class="divider-line"></div>
-            </div>
-
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem;">
-                
-                <div class="card anim-up d4">
-                    <span class="classified-badge">Top Secret</span>
-                    <h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">Project Alpha</h3>
-                    <p style="margin-bottom: 1.5rem; font-size: 0.9rem;">Architectural overhaul of mainframe security protocols. Utilized custom encryptions.</p>
-                    <a href="#" class="btn btn-outline">Decrypt Data</a>
-                </div>
-
-                <div class="card anim-up d5">
-                    <span class="classified-badge">Restricted</span>
-                    <h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">Operation Ghost</h3>
-                    <p style="margin-bottom: 1.5rem; font-size: 0.9rem;">Deployment of stealth-mode UI components across global satellite networks.</p>
-                    <a href="#" class="btn btn-outline">View Logs</a>
-                </div>
-
-            </div>
-        </section>
-
-        <section id="systems" class="section">
-            <div class="section-label anim-up d1">002: Systems</div>
-            <h2 class="section-title anim-up d2">Core Competencies</h2>
-            
-            <div class="divider anim-up d3">
-                <div class="divider-line"></div>
-                <div class="divider-diamond"></div>
-                <div class="divider-line"></div>
-            </div>
-
-            <div style="max-width: 600px; margin-top: 2rem;">
-                
-                <div class="skill-bar anim-up d4">
-                    <div class="skill-header">
-                        <span class="skill-name">Frontend Architecture</span>
-                        <span class="skill-level">95%</span>
-                    </div>
-                    <div class="skill-track">
-                        <div class="skill-fill" style="transform: scaleX(0.95);"></div>
-                    </div>
-                </div>
-
-                <div class="skill-bar anim-up d5">
-                    <div class="skill-header">
-                        <span class="skill-name">UI/UX Design</span>
-                        <span class="skill-level">88%</span>
-                    </div>
-                    <div class="skill-track">
-                        <div class="skill-fill" style="transform: scaleX(0.88);"></div>
-                    </div>
-                </div>
-
-                <div class="skill-bar anim-up d6">
-                    <div class="skill-header">
-                        <span class="skill-name">Backend Integration</span>
-                        <span class="skill-level">75%</span>
-                    </div>
-                    <div class="skill-track">
-                        <div class="skill-fill" style="transform: scaleX(0.75);"></div>
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
-        <section id="chronology" class="section">
-            <div class="section-label anim-up d1">003: Chronology</div>
-            <h2 class="section-title anim-up d2">Service History</h2>
-            
-            <div class="divider anim-up d3">
-                <div class="divider-line"></div>
-                <div class="divider-diamond"></div>
-                <div class="divider-line"></div>
-            </div>
-<section id="simulations" class="section">
-            <div class="section-label anim-up">004: Simulations</div>
-            <h2 class="section-title anim-up">Training Modules</h2>
-            
-            <div class="divider anim-up">
-                <div class="divider-line"></div>
-                <div class="divider-diamond"></div>
-                <div class="divider-line"></div>
-            </div>
-
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem;">
-                
-                <div class="card anim-up">
-                    <span class="classified-badge">Lethal</span>
-                    <h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">001: Marksmanship</h3>
-                    <p style="margin-bottom: 1.5rem; font-size: 0.9rem;">Live-fire exercise. Destroy 10 targets. You have 5 lives. Missing a target compromises the mission.</p>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <button class="btn btn-outline" onclick="startShooter('easy')">Easy</button>
-                        <button class="btn btn-outline" onclick="startShooter('medium')">Medium</button>
-                        <button class="btn btn-outline" onclick="startShooter('hard')">Hard</button>
-                    </div>
-                </div>
-
-                <div class="card anim-up" style="opacity: 0.6;">
-                    <span class="classified-badge">Psychological</span>
-                    <h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">002: Interrogation</h3>
-                    <p style="margin-bottom: 1.5rem; font-size: 0.9rem;">Polygraph analysis. Identify the rogue agent's lies before the timer expires.</p>
-                    <button class="btn btn-outline" disabled>Locked</button>
-                </div>
-
-                <div class="card anim-up" style="opacity: 0.6;">
-                    <span class="classified-badge">Technical</span>
-                    <h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">003: Q-Branch</h3>
-                    <p style="margin-bottom: 1.5rem; font-size: 0.9rem;">Utilize your Q-Watch frequency jammer to bypass the mainframe firewall.</p>
-                    <button class="btn btn-outline" disabled>Locked</button>
-                </div>
-
-            </div>
-        </section>
-            <div class="timeline anim-up d4" style="margin-top: 2rem; max-width: 800px;">
-                
-                <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-date">2023 — Present</div>
-                    <h3 class="timeline-title">Lead Architect</h3>
-                    <div class="timeline-subtitle">Nexus Cybernetics Corp.</div>
-                    <p class="timeline-desc">Spearheaded the development of a dark-web surveillance dashboard. Managed a team of 12 engineers to deliver the project 2 months ahead of the global deadline.</p>
-                </div>
-
-                <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-date">2020 — 2023</div>
-                    <h3 class="timeline-title">Systems Operative</h3>
-                    <div class="timeline-subtitle">Sector 7 Laboratories</div>
-                    <p class="timeline-desc">Maintained legacy codebase and integrated modern API endpoints. Designed the proprietary visual language now used across all internal comms.</p>
-                </div>
-
-            </div>
-        </section>
-
-    </main>
-
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-logo">FIRST LIGHT</div>
-            <div class="footer-text">Transmission Ended // © 2026 // Global Portfolio</div>
-        </div>
-    </footer>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>First Light — Global Portfolio</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body class="locked">
-
+    <!-- ── GUN BARREL BACKGROUND LAYER ── -->
     <div class="gun-barrel-bg"></div>
 
+    <!-- ── 007 ENTRANCE GATE ── -->
     <div id="security-gate" class="security-gate">
         
+        <!-- Screen Flash Impact Effect -->
         <div id="muzzle-flash" class="muzzle-flash"></div>
 
+        <!-- Combat Arena Area -->
         <div id="game-area" class="game-area"></div>
 
+        <!-- Briefing Interface Overlay -->
         <div class="gate-content anim-up" id="gate-ui">
             <div class="nav-badge" style="margin: 0 auto 1.5rem; border-color: var(--gold); color: var(--gold);">007</div>
             <h2 class="section-title" style="font-size: 2.2rem; line-height: 1.2;">FIRST LIGHT PROTOCOL</h2>
@@ -245,20 +34,23 @@
         </div>
     </div>
 
+    <!-- ── TRAINING MINIGAME OVERLAY ── -->
     <div id="minigame-overlay" class="security-gate" style="display: none; z-index: 10000; flex-direction: column;">
         <div id="minigame-area" class="game-area active"></div>
         
+        <!-- Dynamic HUD Tracker -->
         <div id="minigame-hud" class="game-hud">
             <div>TARGETS: <span id="hud-score" class="gold-text">0</span> / 10</div>
-            <div>LIVES: <span id="hud-lives" style="color: var(--red);">♥♥♥♥♥</span></div>
+            <div>LIVES: <span id="hud-lives" style="color: var(--red);">♥♥♥♥•</span></div>
         </div>
 
-        <div id="minigame-ui" class="gate-content" style="display: none;">
-            </div>
+        <!-- Injected Content Box for Win/Loss End Screens -->
+        <div id="minigame-ui" class="gate-content" style="display: none;"></div>
 
         <button class="btn btn-outline" id="abort-btn" onclick="abortGame()" style="position: absolute; bottom: 2rem; z-index: 20;">Abort Mission</button>
     </div>
 
+    <!-- ── NAVIGATION BAR ── -->
     <nav class="nav">
         <div class="container nav-inner">
             <a href="#" class="nav-logo">
@@ -275,7 +67,9 @@
         </div>
     </nav>
 
+    <!-- ── MAIN APPLICATION CONTENT ── -->
     <main>
+        <!-- HERO SEGMENT -->
         <section id="intel" class="page-hero">
             <div class="page-hero-grid"></div>
             <div class="container">
@@ -288,6 +82,7 @@
             </div>
         </section>
 
+        <!-- MISSION LOG CHRONOLOGY -->
         <section id="chronology" class="section">
             <div class="container">
                 <div class="section-label anim-up">003: Operational Log</div>
@@ -319,6 +114,7 @@
             </div>
         </section>
 
+        <!-- ── SECTION 004: SIMULATIONS (MINI-GAMES HUB) ── -->
         <section id="simulations" class="section">
             <div class="container">
                 <div class="section-label anim-up">004: Simulations</div>
@@ -332,6 +128,7 @@
 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem;">
                     
+                    <!-- MODULE GAME 001 -->
                     <div class="card anim-up">
                         <span class="classified-badge">Lethal</span>
                         <h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">001: Marksmanship</h3>
@@ -343,18 +140,20 @@
                         </div>
                     </div>
 
+                    <!-- MODULE GAME 002 -->
                     <div class="card anim-up" style="opacity: 0.6;">
                         <span class="classified-badge">Psychological</span>
                         <h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">002: Interrogation</h3>
                         <p style="margin-bottom: 1.5rem; font-size: 0.9rem;">Polygraph analysis. Identify the rogue agent's lies before the timer expires.</p>
-                        <button class="btn btn-outline" disabled>Locked</button>
+                        <button class="btn btn-outline" disabled style="cursor: not-allowed;">Locked</button>
                     </div>
 
+                    <!-- MODULE GAME 003 -->
                     <div class="card anim-up" style="opacity: 0.6;">
                         <span class="classified-badge">Technical</span>
                         <h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">003: Q-Branch</h3>
                         <p style="margin-bottom: 1.5rem; font-size: 0.9rem;">Utilize your Q-Watch frequency jammer to bypass the mainframe firewall.</p>
-                        <button class="btn btn-outline" disabled>Locked</button>
+                        <button class="btn btn-outline" disabled style="cursor: not-allowed;">Locked</button>
                     </div>
 
                 </div>
@@ -362,6 +161,7 @@
         </section>
     </main>
 
+    <!-- SYSTEM FOOTER -->
     <footer class="footer">
         <div class="container">
             <div class="footer-logo">MI6 // FIRST LIGHT</div>
@@ -369,11 +169,12 @@
         </div>
     </footer>
 
+    <!-- ── RE-ENGINEERED ENGINE LOGIC ── -->
     <script>
-        // --- GLOBAL ELEMENTS ---
+        // --- CORE APPLICATION ARCHITECTURE ---
         const muzzleFlash = document.getElementById('muzzle-flash');
         
-        // --- ENTRANCE GATE LOGIC (7 HITS TO ENTER SITE) ---
+        // --- GATE ARCHITECTURE (7 REQUISITE ELIMINATIONS TO DISENGAGE CAPTCHA) ---
         const startBtn = document.getElementById('start-game-btn');
         const gateArea = document.getElementById('game-area');
         const scoreDisplay = document.getElementById('score');
@@ -415,7 +216,7 @@
             }, 2000);
         }
 
-        // --- PORTFOLIO TRAINING SIMULATION ENGINE ---
+        // --- PORTFOLIO SYSTEM SIMULATION SUB-ROUTINES (GAME 1) ---
         const minigameOverlay = document.getElementById('minigame-overlay');
         const minigameArea = document.getElementById('minigame-area');
         const minigameHUD = document.getElementById('minigame-hud');
@@ -433,7 +234,7 @@
         minigameArea.addEventListener('mousedown', () => triggerFlash(minigameArea));
 
         function startShooter(difficulty) {
-            document.body.classList.add('locked'); // Restrict scrolling while active
+            document.body.classList.add('locked'); // Stop background scrolls while actively testing
             minigameOverlay.style.display = 'flex';
             minigameUI.style.display = 'none';
             minigameHUD.style.display = 'block';
@@ -464,7 +265,12 @@
 
         function updateHUD() {
             hudScore.textContent = mgScore;
-            hudLives.textContent = '♥'.repeat(mgLives > 0 ? mgLives : 0);
+            
+            // Build live hearts structure
+            let heartString = '♥'.repeat(mgLives > 0 ? mgLives : 0);
+            let missingString = '•'.repeat(5 - (mgLives > 0 ? mgLives : 0));
+            hudLives.textContent = heartString + missingString;
+
             if (mgLives <= 0) loseMiniGame();
         }
 
@@ -495,10 +301,10 @@
             clearInterval(mgInterval);
             minigameArea.innerHTML = '';
             minigameOverlay.style.display = 'none';
-            document.body.classList.remove('locked'); // Free scroll
+            document.body.classList.remove('locked'); // Free viewing constraints
         }
 
-        // --- REUSABLE UTILITY SCHEDULERS ---
+        // --- GLOBAL REUSABLE PIPELINES ---
         function triggerFlash(container) {
             if (!container.classList.contains('active')) return;
             muzzleFlash.classList.add('fire');
@@ -511,7 +317,7 @@
             node.style.left = Math.floor(Math.random() * 80) + 10 + '%';
             node.style.top = Math.floor(Math.random() * 80) + 10 + '%';
 
-            // Give targets floating motion
+            // Random path drifting loop
             const moveInterval = setInterval(() => {
                 if (node.classList.contains('destroyed')) {
                     clearInterval(moveInterval);
@@ -531,13 +337,13 @@
 
             container.appendChild(node);
 
-            // Timeout monitoring
+            // Cleanup monitoring pipeline
             setTimeout(() => {
                 if (!node.classList.contains('destroyed') && node.parentNode) {
                     clearInterval(moveInterval);
                     node.remove();
                     if (!isEntryGame) {
-                        mgLives--; // Remove a heart if a simulation target escapes
+                        mgLives--; // Deduct penalty unit if item escapes validation parameters
                         updateHUD();
                     }
                 }
