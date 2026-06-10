@@ -78,11 +78,11 @@ body::after {
   z-index: 9998;
 }
 
-/* ── GUN BARREL WATERMARK BACKGROUND ────────────────────────── */
+/* ── GUN BARREL BACKGROUND WATERMARK ────────────────────────── */
 .gun-barrel-bg {
   position: fixed;
   inset: 0;
-  background-image: url('image_05efe2.png');
+  background-image: url('gun-barrel.png');
   background-size: auto 120vh;
   background-position: center center;
   background-repeat: no-repeat;
@@ -140,7 +140,11 @@ h1, h2, h3, h4 {
   margin: 0 auto;
 }
 
-.section { padding: var(--section-pad) 0; }
+/* FIX APPLIED: scroll-margin-top prevents the nav from covering section headers */
+.section { 
+  padding: var(--section-pad) 0; 
+  scroll-margin-top: calc(var(--nav-h) + 2rem);
+}
 
 /* ── NAVIGATION ────────────────────────────────────────────── */
 .nav {
@@ -352,6 +356,46 @@ h1, h2, h3, h4 {
 }
 .card:hover::before { opacity: 1; }
 
+/* ── SKILL BARS (Arsenal) ──────────────────────────────────── */
+.skill-bar { margin-bottom: 1.6rem; }
+.skill-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+.skill-name {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--cream);
+}
+.skill-level {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--gold);
+}
+.skill-track {
+  height: 1px;
+  background: var(--border-light);
+  position: relative;
+}
+.skill-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-dark), var(--gold));
+  transform-origin: left;
+  transition: transform 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.skill-fill::after {
+  content: '';
+  position: absolute;
+  right: -4px; top: -3.5px;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--gold-light);
+  box-shadow: 0 0 8px var(--gold);
+}
+
 /* ── TIMELINE ──────────────────────────────────────────────── */
 .timeline {
   position: relative;
@@ -534,13 +578,13 @@ body.locked { overflow: hidden; }
 .gate-content {
   padding: 3.5rem;
   border: 1px solid var(--border);
-  background: rgba(17, 17, 17, 0.85);
+  background: rgba(17, 17, 17, 0.92);
   backdrop-filter: blur(10px);
   box-shadow: var(--shadow);
   max-width: 480px;
   width: 90%;
   position: relative;
-  z-index: 20;
+  z-index: 40;
 }
 
 .muzzle-flash {
@@ -564,9 +608,10 @@ body.locked { overflow: hidden; }
   overflow: hidden;
   pointer-events: none; 
 }
+
 .game-area.active {
   pointer-events: auto;
-  z-index: 30; 
+  z-index: 45; 
 }
 
 /* Target Assets */
@@ -584,6 +629,7 @@ body.locked { overflow: hidden; }
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 50;
 }
 .target-node::before {
   content: '';
@@ -623,11 +669,12 @@ body.locked { overflow: hidden; }
   text-transform: uppercase;
 }
 
+/* ── IN-GAME HEADS UP DISPLAY (HUD) ───────────────────────── */
 .game-hud {
   position: absolute;
   top: 2rem;
   left: 2rem;
-  z-index: 20;
+  z-index: 60;
   font-family: var(--font-mono);
   font-size: 1.2rem;
   color: var(--cream);
@@ -650,4 +697,25 @@ input[type=number] {
 input[type=number]:focus {
   border-color: var(--gold-light) !important;
   box-shadow: var(--glow-sm);
+}
+
+/* ── BOSS FIGHT CANVAS STYLING ── */
+#boss-canvas {
+  background-color: var(--void);
+  border: 2px solid var(--border-light);
+  box-shadow: var(--shadow);
+  display: block;
+  margin: 2rem auto;
+  max-width: 100%;
+}
+.boss-guide {
+  font-family: var(--font-mono);
+  color: var(--gold);
+  font-size: 0.85rem;
+  text-align: center;
+  letter-spacing: 0.15em;
+  margin-top: 1rem;
+  background: rgba(0,0,0,0.5);
+  padding: 1rem;
+  border: 1px solid var(--border);
 }
