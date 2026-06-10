@@ -3,503 +3,692 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>First Light — Global Portfolio</title>
-    <link rel="stylesheet" href="style.css">
+    <title>SECTOR ZERO - Neon Crypt</title>
+    <style>
+        /* =========================================================
+           CSS & UI STYLING
+           ========================================================= */
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+
+        :root {
+            --bg-color: #05020a;
+            --neon-cyan: #00f3ff;
+            --neon-magenta: #ff00ff;
+            --acid-green: #39ff14;
+            --blood-red: #ff2a2a;
+            --hud-dark: rgba(10, 5, 20, 0.9);
+        }
+
+        body {
+            margin: 0; padding: 0; background-color: var(--bg-color); color: #fff;
+            font-family: 'Space Mono', monospace; overflow: hidden;
+            display: flex; justify-content: center; align-items: center; height: 100vh;
+        }
+
+        #game-wrapper {
+            position: relative; width: 1024px; height: 768px;
+            box-shadow: 0 0 50px rgba(0, 243, 255, 0.1);
+            background: #000; overflow: hidden; cursor: crosshair;
+        }
+
+        /* The 3D Rendering Canvas */
+        #game-canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
+
+        /* CRT Scanline Overlay */
+        #game-wrapper::after {
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 4px, 3px 100%; pointer-events: none; z-index: 100;
+        }
+
+        /* ── HUD ── */
+        #hud {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 90px;
+            background: var(--hud-dark); border-top: 2px solid var(--neon-cyan);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 20px; box-sizing: border-box; z-index: 50;
+        }
+
+        .hud-block { display: flex; flex-direction: column; }
+        .hud-label { font-size: 12px; color: #888; letter-spacing: 2px; }
+        .hud-value { font-size: 28px; font-weight: bold; color: var(--neon-cyan); }
+        .warn { color: var(--blood-red) !important; animation: pulse 1s infinite; }
+        @keyframes pulse { 50% { opacity: 0.5; } }
+
+        /* Minimap */
+        #minimap-container {
+            position: absolute; top: 20px; right: 20px; width: 150px; height: 150px;
+            border: 2px solid var(--neon-cyan); background: rgba(0,0,0,0.8);
+            border-radius: 5px; z-index: 50; overflow: hidden;
+        }
+        #minimap-canvas { width: 100%; height: 100%; image-rendering: pixelated; }
+
+        /* Chatter / Interaction Box */
+        #chatter-box {
+            position: absolute; bottom: 120px; left: 20px; width: 400px;
+            display: flex; flex-direction: column; gap: 5px; z-index: 50;
+        }
+        .chat-msg {
+            background: rgba(0, 243, 255, 0.1); border-left: 3px solid var(--neon-cyan);
+            padding: 5px 10px; font-size: 14px; text-shadow: 1px 1px 0 #000;
+            animation: slideIn 0.3s ease-out; opacity: 1; transition: opacity 1s;
+        }
+        .chat-sys { border-color: var(--acid-green); color: var(--acid-green); }
+        .chat-err { border-color: var(--blood-red); color: var(--blood-red); }
+        @keyframes slideIn { from { transform: translateX(-20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        /* Interaction Tooltip */
+        #interact-tooltip {
+            position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%);
+            color: var(--acid-green); font-size: 18px; font-weight: bold;
+            text-shadow: 0 0 10px var(--acid-green); z-index: 50; display: none;
+        }
+
+        #crosshair {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            color: rgba(255,255,255,0.5); font-size: 24px; z-index: 40; pointer-events: none;
+        }
+
+        /* Screens */
+        .screen {
+            position: absolute; inset: 0; background: rgba(5,2,10,0.95);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 200; text-align: center;
+        }
+        .hidden { display: none !important; }
+        h1 { font-size: 80px; margin: 0; color: var(--neon-cyan); text-shadow: 0 0 30px var(--neon-cyan); }
+        h2 { font-size: 24px; color: #ccc; margin-bottom: 40px; }
+        .btn {
+            background: transparent; border: 2px solid var(--neon-cyan); color: var(--neon-cyan);
+            padding: 15px 40px; font-size: 20px; font-family: 'Space Mono', monospace;
+            cursor: pointer; transition: all 0.2s; text-transform: uppercase;
+        }
+        .btn:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 20px var(--neon-cyan); }
+
+        #boss-bar { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: 400px; display: none; z-index: 50;}
+        #boss-bar-bg { width: 100%; height: 20px; border: 2px solid var(--blood-red); background: #111; }
+        #boss-bar-fill { width: 100%; height: 100%; background: var(--blood-red); transition: width 0.2s; }
+        #boss-name { color: var(--blood-red); font-weight: bold; margin-bottom: 5px; text-align: center;}
+        
+        #damage-flash { position: absolute; inset: 0; background: radial-gradient(circle, transparent 30%, rgba(255,0,0,0.6) 100%); opacity: 0; z-index: 90; pointer-events: none;}
+    </style>
 </head>
-<body class="locked">
+<body>
 
-    <div id="security-gate" class="security-gate">
-        <div id="muzzle-flash" class="muzzle-flash"></div>
-        <div id="game-area" class="game-area"></div>
+<div id="game-wrapper">
+    <canvas id="game-canvas" width="1024" height="768"></canvas>
+    <div id="crosshair">+</div>
+    <div id="damage-flash"></div>
 
-        <div class="gate-content anim-up" id="gate-ui">
-            <div class="nav-badge" style="margin: 0 auto 1.5rem; border-color: var(--gold); color: var(--gold);">007</div>
-            <h2 class="section-title" style="font-size: 2.2rem; line-height: 1.2;">FIRST LIGHT PROTOCOL</h2>
-            <p class="timeline-subtitle" style="margin-bottom: 2rem; color: var(--red); font-size: 0.8rem;">⚠ WARNING: ROGUE AGENTS DETECTED</p>
-            
-            <div class="score-display">
-                Agents Eliminated: <span id="score" class="gold-text">0</span> / 7
-            </div>
-
-            <button class="btn btn-primary" id="start-game-btn">Engage Hostiles</button>
-        </div>
-        
-        <button onclick="winEntryGame()" style="position: absolute; bottom: 10px; right: 10px; background: transparent; border: none; color: var(--text-muted); opacity: 0.25; font-size: 10px; cursor: pointer; padding: 5px; z-index: 9999; font-family: monospace;">[ DEV OVERRIDE ]</button>
+    <div id="interact-tooltip">[E] OPEN DOOR</div>
+    <div id="chatter-box"></div>
+    
+    <div id="minimap-container"><canvas id="minimap-canvas" width="150" height="150"></canvas></div>
+    
+    <div id="boss-bar">
+        <div id="boss-name">⚠ THE WARDEN ⚠</div>
+        <div id="boss-bar-bg"><div id="boss-bar-fill"></div></div>
     </div>
 
-    <div id="minigame-overlay" class="security-gate" style="display: none; z-index: 10000; flex-direction: column;">
-        <div id="minigame-area" class="game-area"></div>
-        <div id="minigame-ui" class="gate-content" style="display: none;"></div>
-        
-        <button class="btn btn-outline" id="abort-btn" onclick="abortGame()" style="position: absolute; bottom: 2rem; z-index: 10050; display: none;">Abort Mission</button>
+    <div id="hud">
+        <div class="hud-block">
+            <span class="hud-label">INTEGRITY</span>
+            <span class="hud-value" id="ui-hp">100%</span>
+        </div>
+        <div class="hud-block">
+            <span class="hud-label">SCORE</span>
+            <span class="hud-value" style="color:var(--neon-magenta);" id="ui-score">0000</span>
+        </div>
+        <div class="hud-block">
+            <span class="hud-label">WEAPON</span>
+            <span class="hud-value" id="ui-wpn">PISTOL</span>
+        </div>
+        <div class="hud-block" style="text-align: right;">
+            <span class="hud-label">MAG / RESERVE [R]</span>
+            <span class="hud-value"><span id="ui-mag">12</span> / <span id="ui-ammo">60</span></span>
+        </div>
     </div>
 
-    <nav class="nav">
-        <div class="container nav-inner">
-            <a href="#" class="nav-logo">
-                <div class="nav-badge">01</div>
-                FIRST LIGHT
-            </a>
-            <ul class="nav-links">
-                <li><a href="#intel" class="active">Intel</a></li>
-                <li><a href="#simulations">Simulations</a></li>
-            </ul>
-        </div>
-    </nav>
+    <div id="screen-title" class="screen">
+        <h1>SECTOR ZERO</h1>
+        <h2 style="color: var(--neon-magenta);">NEON-GOTHIC CRYPT</h2>
+        <button class="btn" id="btn-start">INITIALIZE DEPLOYMENT</button>
+        <p style="margin-top: 30px; color:#888; font-size:14px;">[W A S D] Move | [MOUSE] Aim & Shoot | [R] Reload | [E] Interact</p>
+    </div>
 
-    <main>
-        <section id="intel" class="page-hero">
-            <div class="page-hero-grid"></div>
-            <div class="container">
-                <div class="page-tag anim-up d1">
-                    <div class="page-tag-line"></div>
-                    <div class="page-tag-text">MI6 Dossier Restricted</div>
-                </div>
-                <h1 class="page-title anim-up d2">Agent <strong>First Light</strong></h1>
-                <p class="page-subtitle anim-up d3">// Digital Systems Operative // Cyber-Intelligence Specialization</p>
-            </div>
-        </section>
+    <div id="screen-gameover" class="screen hidden">
+        <h1 style="color: var(--blood-red); text-shadow: 0 0 30px var(--blood-red);">AGENT KIA</h1>
+        <h2>Vital Signs Critical. Mission Failed.</h2>
+        <button class="btn" id="btn-restart" style="border-color: var(--blood-red); color: var(--blood-red);">REDEPLOY (REGENERATE MAZE)</button>
+    </div>
 
-        <section id="simulations" class="section">
-            <div class="container">
-                <div class="section-label anim-up">004: Simulations</div>
-                <h2 class="section-title anim-up">Training Modules</h2>
-                <div class="divider anim-up"><div class="divider-line"></div><div class="divider-diamond"></div><div class="divider-line"></div></div>
+    <div id="screen-win" class="screen hidden">
+        <h1 style="color: var(--acid-green); text-shadow: 0 0 30px var(--acid-green);">SECTOR SECURED</h1>
+        <h2>The Warden has been neutralized.</h2>
+        <p>Final Score: <strong id="final-score" style="color:var(--neon-cyan); font-size:24px;">0</strong></p>
+        <button class="btn" id="btn-win-restart" style="border-color: var(--acid-green); color: var(--acid-green);">NEW MISSION</button>
+    </div>
+</div>
 
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem;">
-                    
-                    <div class="card anim-up">
-                        <span class="classified-badge">Lethal</span>
-                        <h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">001: Marksmanship</h3>
-                        <p style="margin-bottom: 1.5rem; font-size: 0.9rem;">Live-fire exercise. Destroy 10 targets. Missing a target compromises the mission.</p>
-                        <button class="btn btn-outline" onclick="startShooter()">Initiate</button>
-                    </div>
+<script>
+/** ============================================================================
+ * 1. CONFIG & GLOBAL VARIABLES
+ * ============================================================================ */
+const W = 1024, H = 768;
+const canvas = document.getElementById('game-canvas');
+const ctx = canvas.getContext('2d');
+const miniCanvas = document.getElementById('minimap-canvas');
+const mCtx = miniCanvas.getContext('2d');
 
-                    <div class="card anim-up">
-                        <span class="classified-badge">Combat</span>
-                        <h3 style="margin-top: 1rem; margin-bottom: 0.5rem;">002: Syndicate Boss</h3>
-                        <p style="margin-bottom: 1.5rem; font-size: 0.9rem;">Close quarters combat simulator. Evade enemy fire and neutralize the armored target.</p>
-                        <button class="btn btn-outline" onclick="startModuleTwo()">Initiate Combat</button>
-                    </div>
+let actx; // Audio context
+let reqAnimFrame;
+let lastTime = 0;
+let gameState = 'TITLE'; // TITLE, PLAY, GAMEOVER, WIN
 
-                    <div class="card anim-up">
-                        <span class="classified-badge" style="color:var(--gold); border-color:var(--gold);">Classified</span>
-                        <h3 style="margin-top: 1rem; margin-bottom: 0.5rem; color:var(--gold);">003: Sector Zero</h3>
-                        <p style="margin-bottom: 1.5rem; font-size: 0.9rem;">2.5D FPS Maze Simulator. Infiltrate the crypt, locate keycards, and eliminate the Warden.</p>
-                        <button class="btn btn-primary" onclick="startSectorZero()">BREACH BUNKER</button>
-                    </div>
+// Inputs
+const keys = {};
+let mouse = { clicked: false, ready: true };
 
-                </div>
-            </div>
-        </section>
-    </main>
+// Game State
+let score = 0;
+let chatterQueue = [];
+let shakeTime = 0;
 
-    <script>
-        const muzzleFlash = document.getElementById('muzzle-flash');
-        const minigameOverlay = document.getElementById('minigame-overlay');
-        const minigameArea = document.getElementById('minigame-area');
-        const minigameUI = document.getElementById('minigame-ui');
-        const abortBtn = document.getElementById('abort-btn');
+// Render Globals
+const ZBuffer = new Float64Array(W);
+const spritesCache = {};
+
+// Colors
+const FOG_COLOR = '#0a0512';
+const CEIL_COLOR = '#140a1f';
+const FLOOR_COLOR = '#0d0d14';
+
+/** ============================================================================
+ * 2. PLAYER, WEAPONS & ENTITIES
+ * ============================================================================ */
+const player = {
+    x: 0, y: 0, dirX: -1, dirY: 0, planeX: 0, planeY: 0.66,
+    hp: 100, maxHp: 100,
+    mag: 12, maxMag: 12, ammo: 48,
+    shootCD: 0,
+    hasRedKey: false
+};
+
+const entities = [];
+const projectiles = [];
+const particles = [];
+const doors = [];
+
+/** ============================================================================
+ * 3. PROCEDURAL MAZE GENERATOR
+ * ============================================================================ */
+const MW = 40, MH = 40;
+let mapGrid = [];
+let seenGrid = [];
+
+function generateProceduralMaze() {
+    mapGrid = Array.from({length: MH}, () => Array(MW).fill(1));
+    seenGrid = Array.from({length: MH}, () => Array(MW).fill(false));
+    entities.length = 0; doors.length = 0;
+    
+    let rooms = [];
+    // 1. Generate Rooms
+    for(let i=0; i<20; i++) {
+        let rw = Math.floor(Math.random()*5 + 4);
+        let rh = Math.floor(Math.random()*5 + 4);
+        let rx = Math.floor(Math.random()*(MW-rw-2) + 1);
+        let ry = Math.floor(Math.random()*(MH-rh-2) + 1);
         
-        let entryInterval;
-        let globalGameInterval;
-
-        // --- ENTRANCE GATE LOGIC ---
-        const startBtn = document.getElementById('start-game-btn');
-        const gateArea = document.getElementById('game-area');
-        const scoreDisplay = document.getElementById('score');
-        const gateUI = document.getElementById('gate-ui');
-        const gate = document.getElementById('security-gate');
-        let entryScore = 0;
-
-        gateArea.addEventListener('pointerdown', () => { muzzleFlash.classList.add('fire'); setTimeout(()=>muzzleFlash.classList.remove('fire'),50); });
-
-        startBtn.addEventListener('click', () => {
-            startBtn.style.display = 'none'; gateArea.classList.add('active'); 
-            spawnEntryNode(); entryInterval = setInterval(spawnEntryNode, 850); 
-        });
-
-        function spawnEntryNode() {
-            if (entryScore >= 7) return;
-            const node = document.createElement('div'); node.classList.add('target-node');
-            node.style.left = Math.floor(Math.random()*80)+10+'%'; node.style.top = Math.floor(Math.random()*80)+10+'%';
-            node.addEventListener('pointerdown', function(e) {
-                e.stopPropagation(); if(this.classList.contains('destroyed')) return;
-                this.classList.add('destroyed'); entryScore++; scoreDisplay.textContent = entryScore;
-                if (entryScore >= 7) winEntryGame();
-                setTimeout(() => this.remove(), 250);
-            });
-            gateArea.appendChild(node);
-            setTimeout(() => { if(!node.classList.contains('destroyed')){ node.remove(); } }, 3000);
+        // Avoid overlap
+        let overlap = false;
+        for(let rm of rooms) {
+            if(rx < rm.x+rm.w+2 && rx+rw+2 > rm.x && ry < rm.y+rm.h+2 && ry+rh+2 > rm.y) { overlap = true; break; }
         }
-
-        function winEntryGame() {
-            clearInterval(entryInterval); gateArea.innerHTML = ''; gateArea.classList.remove('active');
-            gateUI.innerHTML = `<h2 class="section-title" style="color:var(--gold-light);">SECTOR CLEARED</h2>`;
-            setTimeout(() => { gate.classList.add('unlocked'); document.body.classList.remove('locked'); }, 1000); 
+        if(!overlap) {
+            rooms.push({x:rx, y:ry, w:rw, h:rh, cx: Math.floor(rx+rw/2), cy: Math.floor(ry+rh/2)});
+            for(let y=ry; y<ry+rh; y++) {
+                for(let x=rx; x<rx+rw; x++) mapGrid[y][x] = 0;
+            }
         }
+    }
 
-        // --- GLOBAL ABORT (CLEANS ALL MODULES) ---
-        function abortGame() {
-            clearInterval(globalGameInterval);
-            if(szReqAnim) cancelAnimationFrame(szReqAnim); // Stop Sector Zero Loop
-            szCleanupEvents(); // Unbind keys/mouse
-            
-            minigameArea.innerHTML = '';
-            minigameUI.style.display = 'none';
-            abortBtn.style.display = 'none';
-            minigameOverlay.style.display = 'none';
-            minigameArea.classList.remove('active'); 
-            document.body.classList.remove('locked');
-            if(document.pointerLockElement) document.exitPointerLock();
-        }
+    // 2. Connect Rooms (Corridors)
+    for(let i=1; i<rooms.length; i++) {
+        let r1 = rooms[i-1], r2 = rooms[i];
+        let x = r1.cx, y = r1.cy;
+        while(x !== r2.cx) { mapGrid[y][x] = 0; x += Math.sign(r2.cx - x); }
+        while(y !== r2.cy) { mapGrid[y][x] = 0; y += Math.sign(r2.cy - y); }
+    }
 
-        function endMiniGame(messageHTML) {
-            clearInterval(globalGameInterval);
-            if(szReqAnim) cancelAnimationFrame(szReqAnim);
-            szCleanupEvents();
-
-            minigameArea.innerHTML = '';
-            abortBtn.style.display = 'none';
-            minigameArea.classList.remove('active'); 
-            
-            minigameUI.style.display = 'block';
-            minigameUI.innerHTML = messageHTML + `<br><button class="btn btn-outline" style="position:relative; z-index:10100;" onclick="abortGame()">Return to Portfolio</button>`;
-            if(document.pointerLockElement) document.exitPointerLock();
-        }
-
-        // --- MODULE 001 ---
-        function startShooter() {
-            document.body.classList.add('locked'); minigameOverlay.style.display = 'flex';
-            minigameUI.style.display = 'none'; minigameArea.classList.add('active'); abortBtn.style.display = 'block';
-            minigameArea.innerHTML = `<div style="position:absolute; top:20px; left:20px; color:white; z-index:100; font-family:monospace; font-size:20px;">SHOOT THE TARGETS</div>`;
-            let targets = 0;
-            globalGameInterval = setInterval(() => {
-                if(targets >= 10) return endMiniGame(`<h2 class="section-title" style="color: var(--gold-light);">ASSIGNMENT CLEARED</h2>`);
-                const node = document.createElement('div'); node.classList.add('target-node');
-                node.style.left = Math.floor(Math.random()*80)+10+'%'; node.style.top = Math.floor(Math.random()*80)+10+'%';
-                node.addEventListener('pointerdown', function() { this.remove(); targets++; });
-                minigameArea.appendChild(node);
-                setTimeout(() => { if(node.parentNode) endMiniGame(`<h2 class="section-title" style="color: var(--red);">MISSION FAILED</h2>`); }, 1500);
-            }, 1000);
-        }
-
-        // --- MODULE 002 (Old Boss Placeholder) ---
-        function startModuleTwo() {
-            document.body.classList.add('locked'); minigameOverlay.style.display = 'flex';
-            minigameArea.classList.add('active'); abortBtn.style.display = 'block';
-            minigameArea.innerHTML = `<div style="display:flex; height:100%; align-items:center; justify-content:center; color:white; font-family:monospace; font-size:20px;">SYSTEM OVERRIDDEN. PLEASE USE SECTOR ZERO.</div>`;
-        }
-
-
-        // =========================================================================
-        // === MODULE 003: SECTOR ZERO (DDA RAYCASTER ENGINE) ======================
-        // =========================================================================
-        
-        let szReqAnim;
-        let actx; // Audio context
-        let szKeys = {};
-        
-        // Globals for Engine
-        const S_W = 640, S_H = 480;
-        let szCtx, szMiniCtx;
-        let ZBuffer = new Float64Array(S_W);
-        let spritesCache = {};
-        
-        let szMap = [], szSeen = [];
-        const MSZ = 24;
-        
-        // Map Legend: 1:Wall, .:Floor, @:Spawn
-        // Doors: r,g,b,y | Keys: R,G,B,Y | Weapons: p,s,c | Ammo: a,A,S | Health/Arm: +, *
-        // Enemies: E(Guard), D(Demon), L(Elite), W(Boss) | X:Exit
-        const rawMap = [
-            "111111111111111111111111",
-            "1@..p..11..aA.1..A.....1",
-            "1......11.11..1.*+.....1",
-            "1...E..11.1E.b..s......y",
-            "1......11.1a1.1........1",
-            "111111111.111.1111...1111",
-            "1..a....r....*..1...A..1",
-            "1.a1....111111111...A..1",
-            "1..R....1...A..A...W...1",
-            "1.......1...+......X...1",
-            "111111111111111111111111"
-        ];
-
-        let szPlayer, szEntities, szProjectiles, szParticles, szDoors;
-
-        function szInitAudio() { if(!actx) actx = new (window.AudioContext || window.webkitAudioContext)(); }
-        function szPlaySnd(type) {
-            if(!actx) return;
-            const osc = actx.createOscillator(), gain = actx.createGain();
-            osc.connect(gain); gain.connect(actx.destination);
-            const t = actx.currentTime;
-            
-            if(type === 'shoot') { osc.type='square'; osc.frequency.setValueAtTime(150,t); osc.frequency.exponentialRampToValueAtTime(40,t+0.1); gain.gain.setValueAtTime(0.3,t); gain.gain.exponentialRampToValueAtTime(0.01,t+0.1); osc.start(t); osc.stop(t+0.1); }
-            else if(type === 'hit') { osc.type='sine'; osc.frequency.setValueAtTime(200,t); osc.frequency.exponentialRampToValueAtTime(50,t+0.15); gain.gain.setValueAtTime(0.4,t); gain.gain.linearRampToValueAtTime(0,t+0.15); osc.start(t); osc.stop(t+0.15); }
-            else if(type === 'pickup') { osc.type='sine'; osc.frequency.setValueAtTime(600,t); osc.frequency.setValueAtTime(800,t+0.1); gain.gain.setValueAtTime(0.2,t); gain.gain.linearRampToValueAtTime(0,t+0.2); osc.start(t); osc.stop(t+0.2); }
-        }
-
-        // Gen Canvas Sprite
-        function mkSpr(w, h, drawFn) { const c = document.createElement('canvas'); c.width=w; c.height=h; drawFn(c.getContext('2d')); return c; }
-
-        function szLoadLevel() {
-            szMap = []; szSeen = []; szEntities = []; szProjectiles = []; szParticles = []; szDoors = [];
-            szPlayer = { x:2, y:2, dirX:-1, dirY:0, planeX:0, planeY:0.66, hp:100, max:100, armor:0, bul:50, shl:0, keys:{r:0,g:0,b:0,y:0}, wpn:1, hasW:{1:1,2:0,3:0}, cd:0 };
-            
-            // Build Sprites
-            spritesCache['E'] = mkSpr(64,64, c=>{ c.fillStyle='#8B4513'; c.fillRect(16,20,32,30); c.fillStyle='#FFD700'; c.fillRect(24,8,16,16); }); // Guard
-            spritesCache['D'] = mkSpr(64,64, c=>{ c.fillStyle='#8b0000'; c.fillRect(10,24,44,40); c.fillStyle='#ffaa00'; c.fillRect(20,30,8,8); c.fillRect(36,30,8,8); }); // Demon
-            spritesCache['W'] = mkSpr(64,64, c=>{ c.fillStyle='#333'; c.fillRect(5,5,54,54); c.fillStyle='#f00'; c.fillRect(10,20,44,8); }); // Boss
-            spritesCache['a'] = mkSpr(32,32, c=>{ c.fillStyle='#8B4513'; c.fillRect(6,16,20,16); }); // Ammo
-            spritesCache['R'] = mkSpr(32,32, c=>{ c.fillStyle='#f33'; c.fillRect(8,12,16,20); }); // Red Key
-            spritesCache['X'] = mkSpr(64,64, c=>{ c.fillStyle='#fff'; c.fillRect(10,10,44,44); c.fillStyle='#000'; c.fillRect(20,20,24,24); }); // Exit
-
-            // Parse Map
-            for(let i=0; i<MSZ; i++) {
-                szMap[i] = new Array(MSZ).fill(0); szSeen[i] = new Array(MSZ).fill(false);
-                if(i >= rawMap.length) continue;
-                for(let j=0; j<rawMap[i].length; j++) {
-                    let char = rawMap[i][j];
-                    if(char === '1') szMap[i][j] = 1;
-                    else if(char === '@') { szPlayer.x = j+0.5; szPlayer.y = i+0.5; }
-                    else if(['r','g','b','y'].includes(char)) { szMap[i][j] = 2; szDoors.push({x:j, y:i, col:char, state:0, amt:0}); }
-                    else if(char !== '.') {
-                        let hp=0, speed=0, dmg=0, type='ITEM', spr=char;
-                        if(['E','D','L','W'].includes(char)) type = char==='W'?'BOSS':'ENEMY';
-                        if(char==='E'){hp=50; speed=0.01; dmg=10;} if(char==='D'){hp=120; speed=0.015; dmg=20;} if(char==='W'){hp=800; speed=0.005; dmg=20;}
-                        szEntities.push({type:type, spr:spr, x:j+0.5, y:i+0.5, hp:hp, max:hp, spd:speed, dmg:dmg, timer:0, state:'IDLE'});
-                    }
+    // 3. Place Doors (Corridor bottlenecks)
+    for(let y=1; y<MH-1; y++) {
+        for(let x=1; x<MW-1; x++) {
+            if(mapGrid[y][x] === 0) {
+                let horiz = mapGrid[y][x-1]===1 && mapGrid[y][x+1]===1 && mapGrid[y-1][x]===0 && mapGrid[y+1][x]===0;
+                let vert = mapGrid[y-1][x]===1 && mapGrid[y+1][x]===1 && mapGrid[y][x-1]===0 && mapGrid[y][x+1]===0;
+                if((horiz || vert) && Math.random() < 0.2) {
+                    mapGrid[y][x] = 2; // Door
+                    doors.push({x: x, y: y, type: 'normal', state: 0, amt: 0, col: '#00f3ff'});
                 }
             }
         }
+    }
 
-        // Input Bindings
-        function szKeyDown(e) { szKeys[e.code] = true; if(['Digit1','Digit2','Digit3'].includes(e.code)) szPlayer.wpn = parseInt(e.key); if(e.code==='KeyE') szInteract(); if(e.code==='Escape' && document.pointerLockElement) document.exitPointerLock(); }
-        function szKeyUp(e) { szKeys[e.code] = false; }
-        function szMouse(e) { 
-            if(document.pointerLockElement === document.getElementById('sz-canvas')) {
-                let r = -e.movementX * 0.002, odX = szPlayer.dirX, opX = szPlayer.planeX;
-                szPlayer.dirX = szPlayer.dirX*Math.cos(r) - szPlayer.dirY*Math.sin(r); szPlayer.dirY = odX*Math.sin(r) + szPlayer.dirY*Math.cos(r);
-                szPlayer.planeX = szPlayer.planeX*Math.cos(r) - szPlayer.planeY*Math.sin(r); szPlayer.planeY = opX*Math.sin(r) + szPlayer.planeY*Math.cos(r);
+    // 4. Set Spawns
+    player.x = rooms[0].cx + 0.5;
+    player.y = rooms[0].cy + 0.5;
+
+    // Boss in the last generated room
+    let bossRoom = rooms[rooms.length-1];
+    entities.push({type: 'BOSS', x: bossRoom.cx + 0.5, y: bossRoom.cy + 0.5, hp: 1000, max: 1000, spd: 0.008, dmg: 20, timer: 0, state: 'IDLE'});
+
+    // Place Red Key somewhere in middle rooms
+    let keyRoom = rooms[Math.floor(rooms.length / 2)];
+    entities.push({type: 'ITEM', item: 'REDKEY', x: keyRoom.cx + 0.5, y: keyRoom.cy + 0.5});
+
+    // Populate Enemies & Loot in other rooms/corridors
+    for(let i=1; i<rooms.length-1; i++) {
+        let rm = rooms[i];
+        if(Math.random() < 0.6) entities.push({type: 'ENEMY', kind: 'GUARD', x: rm.cx, y: rm.cy, hp: 50, spd: 0.012, dmg: 10, timer: 0, state: 'IDLE'});
+        if(Math.random() < 0.4) entities.push({type: 'ENEMY', kind: 'DEMON', x: rm.x+1, y: rm.y+1, hp: 120, spd: 0.02, dmg: 15, timer: 0, state: 'IDLE'});
+        if(Math.random() < 0.3) entities.push({type: 'ITEM', item: 'AMMO', x: rm.x+2, y: rm.y+2});
+    }
+}
+
+/** ============================================================================
+ * 4. SETUP & SPRITES
+ * ============================================================================ */
+function createSpr(w, h, renderFn) {
+    const c = document.createElement('canvas'); c.width = w; c.height = h;
+    renderFn(c.getContext('2d')); return c;
+}
+
+function initGraphics() {
+    spritesCache['GUARD'] = createSpr(64,64, c=>{ c.fillStyle='#555'; c.fillRect(16,20,32,30); c.fillStyle='#39ff14'; c.fillRect(24,8,16,16); });
+    spritesCache['DEMON'] = createSpr(64,64, c=>{ c.fillStyle='#800'; c.fillRect(10,24,44,40); c.fillStyle='#ff00ff'; c.beginPath(); c.arc(20,30,5,0,7); c.arc(44,30,5,0,7); c.fill(); });
+    spritesCache['BOSS']  = createSpr(128,128, c=>{ c.fillStyle='#222'; c.fillRect(20,20,88,88); c.fillStyle='#f00'; c.fillRect(30,40,68,15); c.fillStyle='#555'; c.fillRect(10,60,20,20); c.fillRect(98,60,20,20); });
+    spritesCache['AMMO']  = createSpr(32,32, c=>{ c.fillStyle='#333'; c.fillRect(4,10,24,20); c.fillStyle='#ff0'; c.fillRect(4,14,24,4); });
+    spritesCache['HP']    = createSpr(32,32, c=>{ c.fillStyle='#eee'; c.fillRect(4,10,24,20); c.fillStyle='#f00'; c.fillRect(14,12,4,16); c.fillRect(10,18,12,4); });
+    spritesCache['REDKEY']= createSpr(32,32, c=>{ c.fillStyle='#f00'; c.fillRect(8,8,16,16); c.fillStyle='#fff'; c.fillRect(8,12,16,4); });
+    spritesCache['PROJ']  = createSpr(16,16, c=>{ c.fillStyle='#0f0'; c.beginPath(); c.arc(8,8,8,0,7); c.fill(); });
+}
+
+function playTone(type) {
+    if(!actx) return;
+    const osc = actx.createOscillator(), g = actx.createGain();
+    osc.connect(g); g.connect(actx.destination);
+    const t = actx.currentTime;
+    if(type === 'shoot') { osc.type='square'; osc.frequency.setValueAtTime(200,t); osc.frequency.exponentialRampToValueAtTime(40,t+0.1); g.gain.setValueAtTime(0.2,t); g.gain.exponentialRampToValueAtTime(0.01,t+0.1); osc.start(t); osc.stop(t+0.1); }
+    if(type === 'reload') { osc.type='sine'; osc.frequency.setValueAtTime(300,t); osc.frequency.linearRampToValueAtTime(400,t+0.2); g.gain.setValueAtTime(0.2,t); g.gain.linearRampToValueAtTime(0.01,t+0.3); osc.start(t); osc.stop(t+0.3); }
+    if(type === 'hit') { osc.type='sawtooth'; osc.frequency.setValueAtTime(100,t); osc.frequency.exponentialRampToValueAtTime(20,t+0.2); g.gain.setValueAtTime(0.3,t); g.gain.exponentialRampToValueAtTime(0.01,t+0.2); osc.start(t); osc.stop(t+0.2); }
+    if(type === 'pickup') { osc.type='sine'; osc.frequency.setValueAtTime(600,t); osc.frequency.setValueAtTime(900,t+0.1); g.gain.setValueAtTime(0.1,t); g.gain.linearRampToValueAtTime(0.01,t+0.2); osc.start(t); osc.stop(t+0.2); }
+}
+
+/** ============================================================================
+ * 5. GAME LOOP & ENGINE
+ * ============================================================================ */
+function initGame() {
+    if(!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+    initGraphics();
+    
+    // Reset Stats
+    player.hp = 100; player.mag = 12; player.ammo = 60; player.hasRedKey = false;
+    score = 0; chatterQueue = [];
+    document.getElementById('boss-bar').style.display = 'none';
+    
+    generateProceduralMaze();
+    addChatter("CRYPT GENERATED. INFILTRATION COMMENCING.", "sys");
+    addChatter("HUNT THE WARDEN.", "sys");
+    
+    gameState = 'PLAY';
+    document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+    canvas.requestPointerLock();
+    
+    lastTime = performance.now();
+    cancelAnimationFrame(reqAnimFrame);
+    gameLoop(lastTime);
+}
+
+function gameLoop(now) {
+    if(gameState !== 'PLAY') return;
+    let dt = (now - lastTime) / 1000;
+    lastTime = now;
+    if(dt > 0.1) dt = 0.1;
+
+    update(dt);
+    render();
+    
+    reqAnimFrame = requestAnimationFrame(gameLoop);
+}
+
+// ── UTILS ──
+function addChatter(msg, type='sys') {
+    const box = document.getElementById('chatter-box');
+    const el = document.createElement('div');
+    el.className = `chat-msg chat-${type}`;
+    el.innerText = msg;
+    box.appendChild(el);
+    setTimeout(() => { el.style.opacity = '0'; setTimeout(()=> el.remove(), 1000); }, 4000);
+}
+
+function mapCheck(x, y) {
+    if(x < 0 || x >= MW || y < 0 || y >= MH) return 1;
+    let dr = doors.find(d => d.x === Math.floor(x) && d.y === Math.floor(y));
+    if(dr && dr.amt > 0.8) return 0; // Open door is walkable
+    return mapGrid[Math.floor(y)][Math.floor(x)];
+}
+
+function takeDamage(amt) {
+    player.hp -= amt;
+    shakeTime = 0.3; playTone('hit');
+    const f = document.getElementById('damage-flash');
+    f.style.opacity = 1; setTimeout(() => f.style.opacity = 0, 200);
+    
+    if(player.hp <= 0) {
+        gameState = 'GAMEOVER'; document.exitPointerLock();
+        document.getElementById('screen-gameover').classList.remove('hidden');
+    }
+}
+
+// ── UPDATE PHYSICS & LOGIC ──
+function update(dt) {
+    if(shakeTime > 0) shakeTime -= dt;
+    if(player.shootCD > 0) player.shootCD -= dt;
+
+    // Movement
+    let ms = 4.0 * dt;
+    let dx=0, dy=0;
+    if(keys['w']) { dx += player.dirX * ms; dy += player.dirY * ms; }
+    if(keys['s']) { dx -= player.dirX * ms; dy -= player.dirY * ms; }
+    if(keys['d']) { dx += player.planeX * ms; dy += player.planeY * ms; }
+    if(keys['a']) { dx -= player.planeX * ms; dy -= player.planeY * ms; }
+    
+    if(mapCheck(player.x + dx*2.5, player.y) === 0) player.x += dx;
+    if(mapCheck(player.x, player.y + dy*2.5) === 0) player.y += dy;
+    
+    seenGrid[Math.floor(player.y)][Math.floor(player.x)] = true;
+
+    // Shooting
+    if(mouse.clicked && mouse.ready) {
+        mouse.ready = false;
+        if(player.mag > 0 && player.shootCD <= 0) {
+            player.mag--; player.shootCD = 0.3; playTone('shoot'); shakeTime = 0.1;
+            
+            // Hitscan Ray
+            let hitE = null, minDist = Infinity;
+            for(let e of entities) {
+                if(e.type !== 'ENEMY' && e.type !== 'BOSS') continue;
+                let px = e.x - player.x, py = e.y - player.y, dist = Math.hypot(px,py);
+                let ang = Math.atan2(py, px) - Math.atan2(player.dirY, player.dirX);
+                while(ang > Math.PI) ang -= Math.PI*2; while(ang < -Math.PI) ang += Math.PI*2;
+                if(Math.abs(ang) < 0.15 && dist < minDist) { hitE = e; minDist = dist; }
             }
-        }
-        function szClick() { if(document.pointerLockElement) szShoot(); else document.getElementById('sz-canvas').requestPointerLock(); }
-
-        function szCleanupEvents() {
-            window.removeEventListener('keydown', szKeyDown); window.removeEventListener('keyup', szKeyUp);
-            window.removeEventListener('mousemove', szMouse); window.removeEventListener('mousedown', szClick);
-            szKeys = {};
-        }
-
-        // Setup DOM
-        function startSectorZero() {
-            szInitAudio();
-            document.body.classList.add('locked'); minigameOverlay.style.display = 'flex';
-            minigameUI.style.display = 'none'; minigameArea.classList.add('active'); abortBtn.style.display = 'block';
-            
-            minigameArea.innerHTML = `
-                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh;">
-                    <div id="sz-container">
-                        <canvas id="sz-canvas" width="640" height="480"></canvas>
-                        <div id="sz-vignette"></div><div id="sz-msg"></div><div id="sz-crosshair"></div>
-                        <div id="sz-guide">W A S D - Move<br>MOUSE - Look<br>L-CLICK - Fire<br>E - Doors</div>
-                        <div id="sz-keys"><div id="k-r" class="sz-keycard sz-key-r"></div><div id="k-g" class="sz-keycard sz-key-g"></div><div id="k-b" class="sz-keycard sz-key-b"></div><div id="k-y" class="sz-keycard sz-key-y"></div></div>
-                        <div id="sz-boss-ui"><div id="sz-boss-name">⚠ THE WARDEN ⚠</div><div id="sz-boss-bar-bg"><div id="sz-boss-bar-fill"></div></div></div>
-                        <div id="sz-hud">
-                            <div class="sz-panel"><div class="sz-text">HP: <span id="sz-hp" class="sz-val">100</span>%</div><div class="sz-text">ARM: <span id="sz-arm" class="sz-val">0</span>%</div></div>
-                            <div class="sz-panel" style="align-items:center;"><div id="sz-wpn" class="sz-text" style="color:#33ffff;">PISTOL</div></div>
-                            <div class="sz-panel"><div class="sz-text">BUL: <span id="sz-bul" class="sz-val">50</span></div><div class="sz-text">SHL: <span id="sz-shl" class="sz-val">0</span></div></div>
-                        </div>
-                        <canvas id="sz-minimap" width="80" height="80"></canvas>
-                    </div>
-                </div>`;
-            
-            szCtx = document.getElementById('sz-canvas').getContext('2d');
-            szMiniCtx = document.getElementById('sz-minimap').getContext('2d');
-            
-            window.addEventListener('keydown', szKeyDown); window.addEventListener('keyup', szKeyUp);
-            window.addEventListener('mousemove', szMouse); document.getElementById('sz-canvas').addEventListener('mousedown', szClick);
-            
-            szLoadLevel();
-            document.getElementById('sz-canvas').requestPointerLock();
-            
-            let lastT = performance.now();
-            function szLoop(now) {
-                let dt = (now - lastT)/1000; lastT = now;
-                if(dt > 0.1) dt = 0.1; // Cap delta
-                szUpdate(dt); szRender();
-                szReqAnim = requestAnimationFrame(szLoop);
+            if(hitE) {
+                hitE.hp -= 25; playTone('hit');
+                particles.push({x: hitE.x, y: hitE.y, life: 0.3});
             }
-            szReqAnim = requestAnimationFrame(szLoop);
+        } else if (player.mag <= 0) {
+            addChatter("*CLICK* Need to reload! [PRESS R]", "err");
         }
+    }
 
-        // --- ENGINE LOGIC ---
-        let szMsgT = 0, szShake = 0;
-        function szShowMsg(txt) { document.getElementById('sz-msg').innerText=txt; document.getElementById('sz-msg').style.opacity=1; szMsgT=2; }
+    // Reloading
+    if(keys['r'] && player.mag < player.maxMag && player.ammo > 0) {
+        keys['r'] = false; // Trigger once
+        playTone('reload'); addChatter("Reloading...", "sys");
+        setTimeout(() => {
+            let needed = player.maxMag - player.mag;
+            let taking = Math.min(needed, player.ammo);
+            player.mag += taking; player.ammo -= taking;
+        }, 500);
+    }
 
-        function szInteract() {
-            let cx=Math.floor(szPlayer.x+szPlayer.dirX), cy=Math.floor(szPlayer.y+szPlayer.dirY);
-            let d=szDoors.find(dr=>dr.x===cx&&dr.y===cy);
-            if(d && d.state===0) { if(szPlayer.keys[d.col]) d.state=1; else szShowMsg(`REQUIRES ${d.col.toUpperCase()} KEYCARD`); }
+    // Door Interaction Logic
+    let faceX = Math.floor(player.x + player.dirX * 1.0);
+    let faceY = Math.floor(player.y + player.dirY * 1.0);
+    let targetDoor = doors.find(d => d.x === faceX && d.y === faceY && d.state === 0);
+    
+    const tt = document.getElementById('interact-tooltip');
+    if(targetDoor) {
+        tt.style.display = 'block';
+        if(keys['e']) {
+            keys['e'] = false; // fire once
+            targetDoor.state = 1; addChatter("DOOR OPENED.", "sys");
         }
+    } else {
+        tt.style.display = 'none';
+    }
 
-        function szMapCheck(x,y) {
-            if(x<0||x>=MSZ||y<0||y>=MSZ) return 1;
-            let d=szDoors.find(dr=>dr.x===Math.floor(x)&&dr.y===Math.floor(y));
-            if(d && d.amt>0.8) return 0; // Open door
-            return szMap[Math.floor(y)][Math.floor(x)];
-        }
+    // Process Door Animations
+    for(let d of doors) { if(d.state === 1 && d.amt < 1) d.amt += dt * 2; }
 
-        function szDamage(amt) {
-            szPlayer.hp -= amt; szShake = 0.2; szPlaySnd('hit');
-            document.getElementById('sz-vignette').style.opacity=1; setTimeout(()=>document.getElementById('sz-vignette').style.opacity=0, 300);
-            if(szPlayer.hp<=0) endMiniGame(`<h2 class="section-title" style="color:var(--red);">AGENT KIA</h2><p class="timeline-subtitle">Sector Zero Breach Failed.</p>`);
-        }
+    // Process Projectiles
+    for(let i=projectiles.length-1; i>=0; i--) {
+        let p = projectiles[i];
+        p.x += p.vx * dt * 20; p.y += p.vy * dt * 20;
+        if(mapCheck(p.x, p.y) !== 0) { projectiles.splice(i,1); continue; }
+        if(Math.hypot(p.x - player.x, p.y - player.y) < 0.4) { takeDamage(p.dmg); projectiles.splice(i,1); }
+    }
 
-        function szShoot() {
-            if(szPlayer.cd > 0 || szPlayer.bul <= 0) return;
-            szPlayer.bul--; szPlayer.cd = 0.4; szPlaySnd('shoot'); szShake=0.1;
-            // Hitscan
-            let hitE=null, mD=Infinity;
-            szEntities.forEach(e=>{
-                if(e.type!=='ENEMY'&&e.type!=='BOSS') return;
-                let dx=e.x-szPlayer.x, dy=e.y-szPlayer.y, dist=Math.hypot(dx,dy);
-                let ang = Math.atan2(dy,dx) - Math.atan2(szPlayer.dirY, szPlayer.dirX);
-                while(ang>Math.PI) ang-=2*Math.PI; while(ang<-Math.PI) ang+=2*Math.PI;
-                if(Math.abs(ang)<0.15 && dist<mD) { hitE=e; mD=dist; }
-            });
-            if(hitE) { hitE.hp -= 15; szPlaySnd('hit'); if(hitE.hp<=0) hitE.type='DEAD'; }
-        }
-
-        function szUpdate(dt) {
-            if(szMsgT>0) { szMsgT-=dt; if(szMsgT<=0) document.getElementById('sz-msg').style.opacity=0; }
-            if(szShake>0) szShake-=dt; if(szPlayer.cd>0) szPlayer.cd-=dt;
-
-            // Move
-            let ms = 3.0*dt, dx=0, dy=0;
-            if(szKeys['KeyW']) {dx+=szPlayer.dirX*ms; dy+=szPlayer.dirY*ms;} if(szKeys['KeyS']) {dx-=szPlayer.dirX*ms; dy-=szPlayer.dirY*ms;}
-            if(szKeys['KeyD']) {dx+=szPlayer.planeX*ms; dy+=szPlayer.planeY*ms;} if(szKeys['KeyA']) {dx-=szPlayer.planeX*ms; dy-=szPlayer.planeY*ms;}
-            if(szMapCheck(szPlayer.x+dx*2.5, szPlayer.y)===0) szPlayer.x+=dx;
-            if(szMapCheck(szPlayer.x, szPlayer.y+dy*2.5)===0) szPlayer.y+=dy;
-            szSeen[Math.floor(szPlayer.y)][Math.floor(szPlayer.x)] = true;
-
-            // Doors
-            szDoors.forEach(d=>{ if(d.state===1 && d.amt<1) d.amt+=dt*2; });
-
-            // Projs
-            for(let i=szProjectiles.length-1; i>=0; i--) {
-                let p=szProjectiles[i]; p.x+=p.vx*dt*30; p.y+=p.vy*dt*30;
-                if(szMapCheck(p.x,p.y)!==0) { szProjectiles.splice(i,1); continue; }
-                if(Math.hypot(p.x-szPlayer.x, p.y-szPlayer.y)<0.4) { szDamage(p.dmg); szProjectiles.splice(i,1); }
+    // Process Entities
+    let bossActive = false;
+    for(let i=entities.length-1; i>=0; i--) {
+        let e = entities[i];
+        let dist = Math.hypot(e.x - player.x, e.y - player.y);
+        
+        if(e.type === 'ITEM') {
+            if(dist < 0.5) {
+                playTone('pickup');
+                if(e.item === 'AMMO') { player.ammo += 12; addChatter("+12 AMMO", "sys"); score += 10; }
+                if(e.item === 'HP') { player.hp = Math.min(100, player.hp + 20); addChatter("+20 HEALTH", "sys"); score += 10;}
+                if(e.item === 'REDKEY') { player.hasRedKey = true; addChatter("WARDEN CRYPT KEY OBTAINED.", "sys"); score += 50;}
+                entities.splice(i, 1);
             }
-
-            // Entities
-            let bossAct = false;
-            for(let i=szEntities.length-1; i>=0; i--) {
-                let e=szEntities[i]; if(e.type==='DEAD') { szEntities.splice(i,1); continue; }
-                let d = Math.hypot(e.x-szPlayer.x, e.y-szPlayer.y);
-                if(e.type==='ITEM' || e.type==='X') {
-                    if(d<0.5) {
-                        szPlaySnd('pickup');
-                        if(e.spr==='a') { szPlayer.bul+=10; szShowMsg('+10 BULLETS'); }
-                        else if(['R','G','B','Y'].includes(e.spr)) { let k=e.spr.toLowerCase(); szPlayer.keys[k]=1; document.getElementById('k-'+k).classList.add('sz-has-key'); szShowMsg(`${e.spr} KEY ACQUIRED`); }
-                        else if(e.spr==='X') endMiniGame(`<h2 class="section-title" style="color:var(--gold-light);">SECTOR ZERO CLEARED</h2><p class="timeline-subtitle">Warden Defeated. Protocol Complete.</p>`);
-                        szEntities.splice(i,1);
-                    }
-                } else if(e.type==='ENEMY'||e.type==='BOSS') {
-                    if(e.type==='BOSS') bossAct = true;
-                    if(e.state==='IDLE' && d<10) e.state='CHASE';
-                    if(e.state==='CHASE') {
-                        let ang=Math.atan2(szPlayer.y-e.y, szPlayer.x-e.x);
-                        if(d>3) { e.x+=Math.cos(ang)*e.spd*dt*60; e.y+=Math.sin(ang)*e.spd*dt*60; }
-                        e.timer-=dt;
-                        if(e.timer<=0) {
-                            e.timer = e.type==='BOSS' ? 1.0 : 2.5;
-                            szProjectiles.push({x:e.x, y:e.y, vx:Math.cos(ang)*0.1, vy:Math.sin(ang)*0.1, dmg:e.dmg});
-                            if(e.type==='BOSS' && e.hp<400) { szProjectiles.push({x:e.x,y:e.y,vx:Math.cos(ang+0.2)*0.1,vy:Math.sin(ang+0.2)*0.1,dmg:e.dmg}); }
-                        }
-                    }
-                    if(e.hp<=0) { 
-                        if(e.type==='BOSS') { szEntities.push({type:'X', spr:'X', x:e.x, y:e.y}); bossAct=false; }
-                        e.type='DEAD'; 
-                    }
-                }
-            }
-
-            // UI
-            document.getElementById('sz-hp').innerText = szPlayer.hp; document.getElementById('sz-bul').innerText = szPlayer.bul;
-            let bui = document.getElementById('sz-boss-ui');
-            if(bossAct) { bui.style.display='block'; let b=szEntities.find(e=>e.type==='BOSS'); if(b) document.getElementById('sz-boss-bar-fill').style.width=(b.hp/b.max*100)+'%'; }
-            else bui.style.display='none';
-        }
-
-        function szRender() {
-            szCtx.fillStyle = '#1a1a2e'; szCtx.fillRect(0,0,S_W,S_H/2); szCtx.fillStyle = '#2a2a2a'; szCtx.fillRect(0,S_H/2,S_W,S_H/2);
-            szCtx.save(); if(szShake>0) szCtx.translate((Math.random()-.5)*10, (Math.random()-.5)*10);
-
-            // 1. Raycast Walls
-            for(let x=0; x<S_W; x+=2) { // Render in 2px strips for performance
-                let cX = 2*x/S_W - 1, rDX = szPlayer.dirX + szPlayer.planeX*cX, rDY = szPlayer.dirY + szPlayer.planeY*cX;
-                let mX = Math.floor(szPlayer.x), mY = Math.floor(szPlayer.y);
-                let dDX = Math.abs(1/rDX), dDY = Math.abs(1/rDY);
-                let sDX, sDY, sX, sY, hit=0, side, isD=0, col='#444';
+        } 
+        else if (e.type === 'ENEMY' || e.type === 'BOSS') {
+            if(e.type === 'BOSS') bossActive = true;
+            
+            // Wake up
+            if(e.state === 'IDLE' && dist < 12) e.state = 'CHASE';
+            
+            if(e.state === 'CHASE') {
+                let ang = Math.atan2(player.y - e.y, player.x - e.x);
+                if(dist > 2) { e.x += Math.cos(ang) * e.spd * dt * 60; e.y += Math.sin(ang) * e.spd * dt * 60; }
                 
-                if(rDX<0){sX=-1; sDX=(szPlayer.x-mX)*dDX;} else{sX=1; sDX=(mX+1-szPlayer.x)*dDX;}
-                if(rDY<0){sY=-1; sDY=(szPlayer.y-mY)*dDY;} else{sY=1; sDY=(mY+1-szPlayer.y)*dDY;}
-
-                while(hit===0) {
-                    if(sDX<sDY){sDX+=dDX; mX+=sX; side=0;} else{sDY+=dDY; mY+=sY; side=1;}
-                    if(mX<0||mX>=MSZ||mY<0||mY>=MSZ) break;
-                    let v = szMap[mY][mX];
-                    if(v>0) {
-                        if(v===2) { let d=szDoors.find(dr=>dr.x===mX&&dr.y===mY); if(d&&d.amt>0.8) continue; isD=1; if(d)col=d.col==='r'?'#800':d.col==='g'?'#080':d.col==='b'?'#008':'#880'; }
-                        else col = side===1 ? '#3a3a3a' : '#4a4a4a';
-                        hit = 1;
-                    }
-                }
-                let pD = side===0 ? (sDX-dDX) : (sDY-dDY);
-                ZBuffer[x] = pD; ZBuffer[x+1] = pD;
-                let h = Math.floor(S_H/pD);
-                szCtx.fillStyle = col; szCtx.fillRect(x, S_H/2 - h/2, 2, h);
-            }
-
-            // 2. Sprites & Projs (Sort & Draw)
-            let sprs = [...szEntities, ...szProjectiles].map(e=>{ e.dist = Math.pow(szPlayer.x-e.x,2)+Math.pow(szPlayer.y-e.y,2); return e; }).sort((a,b)=>b.dist-a.dist);
-            sprs.forEach(s => {
-                let sx = s.x - szPlayer.x, sy = s.y - szPlayer.y;
-                let inv = 1.0/(szPlayer.planeX*szPlayer.dirY - szPlayer.dirX*szPlayer.planeY);
-                let tx = inv*(szPlayer.dirY*sx - szPlayer.dirX*sy), ty = inv*(-szPlayer.planeY*sx + szPlayer.planeX*sy);
-                if(ty > 0) {
-                    let scX = Math.floor((S_W/2)*(1 + tx/ty));
-                    let h = Math.abs(Math.floor(S_H/ty)), w = h;
-                    let dY = Math.floor(S_H/2 - h/2), dX = Math.floor(scX - w/2);
-                    
-                    if(dX<S_W && dX+w>0 && ty < ZBuffer[Math.max(0,Math.min(S_W-1, scX))]) {
-                        if(s.dmg && !s.spr) { szCtx.fillStyle='#0f0'; szCtx.fillRect(dX+w/2-4, dY+h/2-4, 8, 8); } // Projectile
-                        else if(spritesCache[s.spr]) szCtx.drawImage(spritesCache[s.spr], dX, dY, w, h); // Cached entity
-                        else { szCtx.fillStyle='#fff'; szCtx.fillRect(dX,dY,w,h); } // Fallback
-                    }
-                }
-            });
-
-            // 3. Gun Model
-            szCtx.fillStyle='#555'; szCtx.fillRect(S_W/2-20, S_H-120 + (szPlayer.cd>0?20:0), 40, 120);
-
-            szCtx.restore();
-
-            // 4. Minimap
-            szMiniCtx.fillStyle='#000'; szMiniCtx.fillRect(0,0,80,80);
-            for(let i=0; i<MSZ; i++) {
-                for(let j=0; j<MSZ; j++) {
-                    if(szSeen[i][j]) {
-                        if(szMap[i][j]===1) szMiniCtx.fillStyle='#555'; else if(szMap[i][j]===2) szMiniCtx.fillStyle='#aa0'; else szMiniCtx.fillStyle='#222';
-                        szMiniCtx.fillRect(j*3, i*3, 3, 3);
+                e.timer -= dt;
+                if(e.timer <= 0) {
+                    e.timer = e.type==='BOSS' ? (e.hp < 500 ? 0.8 : 1.5) : 2.0; // Boss shoots faster at half HP
+                    projectiles.push({x: e.x, y: e.y, vx: Math.cos(ang)*0.2, vy: Math.sin(ang)*0.2, dmg: e.dmg});
+                    if(e.type==='BOSS' && e.hp < 500) {
+                        projectiles.push({x: e.x, y: e.y, vx: Math.cos(ang+0.2)*0.2, vy: Math.sin(ang+0.2)*0.2, dmg: e.dmg});
+                        projectiles.push({x: e.x, y: e.y, vx: Math.cos(ang-0.2)*0.2, vy: Math.sin(ang-0.2)*0.2, dmg: e.dmg});
                     }
                 }
             }
-            szMiniCtx.fillStyle='#f00'; szMiniCtx.fillRect(szPlayer.x*3 -1, szPlayer.y*3 -1, 3, 3);
+
+            // Death
+            if(e.hp <= 0) {
+                if(e.type === 'BOSS') {
+                    score += 5000;
+                    gameState = 'WIN'; document.exitPointerLock();
+                    document.getElementById('final-score').innerText = score;
+                    document.getElementById('screen-win').classList.remove('hidden');
+                } else {
+                    score += 100; addChatter("Hostile Neutralized.", "sys");
+                    if(Math.random() < 0.4) entities.push({type: 'ITEM', item: 'AMMO', x: e.x, y: e.y});
+                    else if(Math.random() < 0.2) entities.push({type: 'ITEM', item: 'HP', x: e.x, y: e.y});
+                }
+                entities.splice(i, 1);
+            }
         }
-    </script>
+    }
+
+    // Process Particles
+    for(let i=particles.length-1; i>=0; i--) { particles[i].life -= dt; if(particles[i].life<=0) particles.splice(i,1); }
+
+    // Update HUD
+    document.getElementById('ui-hp').innerText = player.hp + "%";
+    document.getElementById('ui-hp').className = player.hp <= 30 ? "hud-value warn" : "hud-value";
+    document.getElementById('ui-mag').innerText = player.mag;
+    document.getElementById('ui-ammo').innerText = player.ammo;
+    document.getElementById('ui-score').innerText = score.toString().padStart(4, '0');
+    
+    const bBar = document.getElementById('boss-bar');
+    if(bossActive) {
+        bBar.style.display = 'block';
+        let b = entities.find(e=>e.type==='BOSS');
+        if(b) document.getElementById('boss-bar-fill').style.width = (b.hp / b.max * 100) + '%';
+    } else {
+        bBar.style.display = 'none';
+    }
+}
+
+// ── RENDER ENGINE ──
+function render() {
+    // Ceil & Floor
+    ctx.fillStyle = CEIL_COLOR; ctx.fillRect(0, 0, W, H/2);
+    ctx.fillStyle = FLOOR_COLOR; ctx.fillRect(0, H/2, W, H/2);
+
+    ctx.save();
+    if(shakeTime > 0) ctx.translate((Math.random()-0.5)*15, (Math.random()-0.5)*15);
+
+    // DDA Raycasting
+    for(let x=0; x<W; x+=2) { // 2px strips
+        let camX = 2 * x / W - 1;
+        let rDx = player.dirX + player.planeX * camX;
+        let rDy = player.dirY + player.planeY * camX;
+        
+        let mapX = Math.floor(player.x), mapY = Math.floor(player.y);
+        let dDistX = Math.abs(1/rDx), dDistY = Math.abs(1/rDy);
+        let sDistX, sDistY, stepX, stepY, hit=0, side, wallCol = '#333';
+
+        if(rDx < 0) { stepX = -1; sDistX = (player.x - mapX) * dDistX; } else { stepX = 1; sDistX = (mapX + 1.0 - player.x) * dDistX; }
+        if(rDy < 0) { stepY = -1; sDistY = (player.y - mapY) * dDistY; } else { stepY = 1; sDistY = (mapY + 1.0 - player.y) * dDistY; }
+
+        while(hit === 0) {
+            if(sDistX < sDistY) { sDistX += dDistX; mapX += stepX; side = 0; } else { sDistY += dDistY; mapY += stepY; side = 1; }
+            if(mapX<0 || mapX>=MW || mapY<0 || mapY>=MH) break;
+            
+            let block = mapGrid[mapY][mapX];
+            if(block > 0) {
+                if(block === 2) {
+                    let d = doors.find(dr => dr.x===mapX && dr.y===mapY);
+                    if(d && d.amt > 0.8) continue; 
+                    wallCol = '#00f3ff'; // Door color
+                } else {
+                    wallCol = side === 1 ? '#180a2b' : '#230f3d'; // Gothic Purples
+                }
+                hit = 1;
+            }
+        }
+
+        let pDist = side === 0 ? (sDistX - dDistX) : (sDistY - dDistY);
+        ZBuffer[x] = pDist; ZBuffer[x+1] = pDist; // Store depth
+        let lineH = Math.floor(H / pDist);
+
+        // Calculate Distance Fog
+        let fogRatio = Math.max(0, Math.min(1, pDist / 12.0)); // Fade to fog color beyond 12 tiles
+        
+        ctx.fillStyle = wallCol;
+        ctx.fillRect(x, Math.max(0, H/2 - lineH/2), 2, lineH);
+        
+        // Draw Fog Stripe overlay
+        if(fogRatio > 0) {
+            ctx.fillStyle = `rgba(10, 5, 18, ${fogRatio})`;
+            ctx.fillRect(x, Math.max(0, H/2 - lineH/2), 2, lineH);
+        }
+    }
+
+    // Render Sprites (Sort by distance)
+    let sprs = [...entities, ...projectiles, ...particles].map(e => {
+        e.dist = Math.pow(player.x - e.x, 2) + Math.pow(player.y - e.y, 2); return e;
+    }).sort((a,b) => b.dist - a.dist);
+
+    for(let s of sprs) {
+        let sx = s.x - player.x, sy = s.y - player.y;
+        let inv = 1.0 / (player.planeX * player.dirY - player.dirX * player.planeY);
+        let tx = inv * (player.dirY * sx - player.dirX * sy);
+        let ty = inv * (-player.planeY * sx + player.planeX * sy);
+        
+        if(ty > 0) {
+            let scX = Math.floor((W/2) * (1 + tx/ty));
+            let sH = Math.abs(Math.floor(H/ty)), sW = sH; // Square sprites
+            let drawY = Math.floor(H/2 - sH/2), drawX = Math.floor(scX - sW/2);
+            
+            // Basic Frustum & Occlusion cull
+            if(drawX < W && drawX+sW > 0 && ty < ZBuffer[Math.max(0, Math.min(W-1, scX))]) {
+                if(s.life !== undefined) { // Particles (Blood/Impact)
+                    ctx.fillStyle = '#f00'; ctx.globalAlpha = s.life/0.3;
+                    ctx.fillRect(drawX+sW/2, drawY+sH/2, 10, 10); ctx.globalAlpha = 1;
+                }
+                else if(s.dmg && !s.type) { // Projectile
+                    ctx.drawImage(spritesCache['PROJ'], drawX+sW/2-10, drawY+sH/2-10, 20, 20);
+                } 
+                else { // Entities
+                    let img = spritesCache[s.kind || s.item || s.type];
+                    if(img) ctx.drawImage(img, drawX, drawY, sW, sH);
+                    else { ctx.fillStyle='#fff'; ctx.fillRect(drawX, drawY, sW, sH); }
+                }
+            }
+        }
+    }
+
+    // First Person Weapon
+    ctx.fillStyle = '#222';
+    ctx.fillRect(W/2 + 20, H - 200 + (player.shootCD>0?30:0), 50, 200);
+    ctx.fillStyle = '#555';
+    ctx.fillRect(W/2 + 30, H - 190 + (player.shootCD>0?30:0), 10, 150);
+
+    ctx.restore();
+
+    // Render Minimap
+    mCtx.fillStyle = '#000'; mCtx.fillRect(0,0,150,150);
+    let scale = 150 / MW;
+    for(let y=0; y<MH; y++) {
+        for(let x=0; x<MW; x++) {
+            if(seenGrid[y][x]) {
+                if(mapGrid[y][x] === 1) mCtx.fillStyle = '#555';
+                else if(mapGrid[y][x] === 2) mCtx.fillStyle = '#00f3ff';
+                else mCtx.fillStyle = '#222';
+                mCtx.fillRect(x*scale, y*scale, scale+0.5, scale+0.5);
+            }
+        }
+    }
+    mCtx.fillStyle = '#39ff14';
+    mCtx.fillRect(player.x * scale - 2, player.y * scale - 2, 4, 4);
+}
+
+/** ============================================================================
+ * 6. EVENT BINDING
+ * ============================================================================ */
+document.addEventListener('keydown', e => keys[e.key.toLowerCase()] = true);
+document.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
+
+document.addEventListener('mousemove', e => {
+    if(document.pointerLockElement === canvas) {
+        let r = -e.movementX * 0.002;
+        let oldX = player.dirX, oldPX = player.planeX;
+        player.dirX = player.dirX*Math.cos(r) - player.dirY*Math.sin(r);
+        player.dirY = oldX*Math.sin(r) + player.dirY*Math.cos(r);
+        player.planeX = player.planeX*Math.cos(r) - player.planeY*Math.sin(r);
+        player.planeY = oldPX*Math.sin(r) + player.planeY*Math.cos(r);
+    }
+});
+
+document.addEventListener('mousedown', () => {
+    if(document.pointerLockElement === canvas) mouse.clicked = true;
+});
+document.addEventListener('mouseup', () => { mouse.clicked = false; mouse.ready = true; });
+
+// Screen Buttons
+document.getElementById('btn-start').addEventListener('click', () => { initGame(); });
+document.getElementById('btn-restart').addEventListener('click', () => { initGame(); });
+document.getElementById('btn-win-restart').addEventListener('click', () => { initGame(); });
+
+canvas.addEventListener('click', () => {
+    if(gameState === 'PLAY' && !document.pointerLockElement) canvas.requestPointerLock();
+});
+</script>
 </body>
 </html>
